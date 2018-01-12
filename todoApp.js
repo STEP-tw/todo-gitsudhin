@@ -64,15 +64,16 @@ const getFileContent=function(file,encoding='utf8'){
 };
 
 const parseLinks=function(dbContent,req){
-  let content=`<ol>`;
   let todosOfThisUser=dbContent.filter((todo)=>{
     return todo.username==req.user.userName;
   });
+
+  let content=`<ol>`;
   todosOfThisUser.forEach((todo)=>{
     content+=`<li><a href="/view.html"><button name="todo1">${todo.title}</button></a></li>`;
   });
+
   content+=`</ol>`;
-  console.log(content);
   return content;
 };
 
@@ -81,12 +82,11 @@ const parseTodoToHTML=function(todoObj){
   delete todoObj['description'];
   delete todoObj['title'];
   delete todoObj['username'];
-  console.log(todoObj);
   let itemsList=Object.keys(todoObj);
-  console.log(itemsList);
+
   itemsList.forEach((item)=>{
     content+=`<br><br><input type="checkbox" >${todoObj[item]}`;
-  })
+  });
   return content;
 };
 
@@ -101,17 +101,27 @@ const getLoginPage=function(req,res){
 const getViewPage=function(req,res){
   let fileContent=getFileContent('../public/view.html');
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
+
   let todos=dbContent.find(todo=>todo.username==req.user.userName);
   let parsedTodo=parseTodoToHTML(todos);
   let multipleTodos=parseLinks(dbContent,req);
+
   fileContent=fileContent.replace('_Preview',parsedTodo);
   fileContent=fileContent.replace('_Links',multipleTodos);
+
   setContentType('../public/view.html',res);
   res.write(fileContent);
   res.end();
 };
 
+const getCreateTodoAction=function(req,res){
+  if(req.cookie.editingMode){
+
+  }
+};
+
 const postTodoAction=function(req,res){
+  res.setHeader('Set-Cookie','editingMode=true');
   let dbContentList=JSON.parse(getFileContent('../data/todoRecords.json'));
   req.body.username=req.user.userName;
   dbContentList.push(req.body);
@@ -120,8 +130,10 @@ const postTodoAction=function(req,res){
 
   let fileContent=getFileContent('../public/create.html');
   let parsedTodo=parseTodoToHTML(req.body);
+
   fileContent=fileContent.replace('_Preview',parsedTodo);
   setContentType('../public/create.html',res);
+  
   res.write(fileContent);
   res.end();
 };
@@ -166,6 +178,7 @@ app.post('/login.html',validatePostUserData);
 app.get('/logout',logoutUser);
 app.get('/view.html',getViewPage);
 app.post('/create.html',postTodoAction);
+app.get('/create.html',getCreateTodoAction);
 app.postprocess(serveStaticFiles);
 
 module.exports=app;
