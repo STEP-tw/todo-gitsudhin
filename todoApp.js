@@ -115,13 +115,11 @@ const getViewPage=function(req,res){
 };
 
 const getCreateTodoAction=function(req,res){
-  if(req.cookie.editingMode){
-
-  }
+  
 };
 
 const postTodoAction=function(req,res){
-  res.setHeader('Set-Cookie','editingMode=true');
+
   let dbContentList=JSON.parse(getFileContent('../data/todoRecords.json'));
   req.body.username=req.user.userName;
   dbContentList.push(req.body);
@@ -133,7 +131,7 @@ const postTodoAction=function(req,res){
 
   fileContent=fileContent.replace('_Preview',parsedTodo);
   setContentType('../public/create.html',res);
-  
+
   res.write(fileContent);
   res.end();
 };
