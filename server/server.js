@@ -71,10 +71,21 @@ const writeToFile=function(content,filename){
   fs.writeFileSync(filename,JSON.stringify(newData,null,2));
 };
 
+const parseLinks=function(dbContent,req){
+  let content=`<ol>`;
+  let todosOfThisUser=dbContent.filter((todo)=>{
+    return todo.username==req.user.userName;
+  });
+  todosOfThisUser.forEach((todo)=>{
+    content+=`<li><a href="/view.html"><button name="todo1">${todo.title}</button></a></li>`;
+  })
+  content+=`</ol>`;
+  console.log(content);
+  return content;
+};
 
-const parseToHTML=function(todoObj){
-  let content="";
-  content+=`<h2>${todoObj.title}</h2><br><h3>${todoObj.description}</h3>`;
+const parseTodoToHTML=function(todoObj){
+  let content=`<h2>${todoObj.title}</h2><br><h3>${todoObj.description}</h3>`;
   let itemsList=Object.keys(todoObj).slice(3);
   itemsList.forEach((item)=>{
     content+=`<br><br><input type="checkbox" >${todoObj[item]}`;
@@ -96,9 +107,10 @@ const getViewPage=function(req,res){
   let fileContent=getFileContent('../public/view.html');
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
   let todos=dbContent.find(todo=>todo.username==req.user.userName);
-  let parsedTodo=parseToHTML(todos);
-  console.log(parsedTodo);
+  let parsedTodo=parseTodoToHTML(todos);
+  let multipleTodos=parseLinks(dbContent,req);
   fileContent=fileContent.replace('_Preview',parsedTodo);
+  fileContent=fileContent.replace('_Links',multipleTodos);
   setContentType('../public/view.html',res);
   res.write(fileContent);
   res.end();

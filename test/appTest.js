@@ -6,7 +6,7 @@ let WebApp = require('../server/webapp.js');
 let th = require('./testHelper.js');
 let app=WebApp.create();
 
-describe('app',()=>{
+describe.skip('app',()=>{
   describe('GET /bad',()=>{
     it('responds with 404',done=>{
       request(app,{method:'GET',url:'/bad'},(res)=>{
