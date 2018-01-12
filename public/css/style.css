@@ -60,6 +60,10 @@
   height: 1px;
   background: rgba(3, 3, 3, 0.31) ;
 }
+#homePageButtons{
+  width: 200px;
+  height: 30px;
+}
 @keyframes fadeIn {
     from {opacity: 0;}
     to {opacity:1 ;}
