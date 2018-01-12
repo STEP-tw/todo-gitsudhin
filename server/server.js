@@ -72,11 +72,13 @@ const writeToFile=function(content,filename){
 };
 
 
-const parseToHTML=function(commentsList){
+const parseToHTML=function(todoObj){
   let content="";
-  commentsList.forEach( (comment)=>{
-    content+=`<pre>${comment.date} ${comment.name} ${comment.comment}</pre>`
-  });
+  content+=`<h2>${todoObj.title}</h2><br><h3>${todoObj.description}</h3>`;
+  let itemsList=Object.keys(todoObj).slice(3);
+  itemsList.forEach((item)=>{
+    content+=`<br><br><input type="checkbox" >${todoObj[item]}`;
+  })
   return content;
 };
 
@@ -86,6 +88,18 @@ const getLoginPage=function(req,res){
   if(req.cookies.logInFailed){
     // res.write('Login Failed');
   }
+  res.write(fileContent);
+  res.end();
+};
+
+const getViewPage=function(req,res){
+  let fileContent=getFileContent('../public/view.html');
+  let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
+  let todos=dbContent.find(todo=>todo.username==req.user.userName);
+  let parsedTodo=parseToHTML(todos);
+  console.log(parsedTodo);
+  fileContent=fileContent.replace('_Preview',parsedTodo);
+  setContentType('../public/view.html',res);
   res.write(fileContent);
   res.end();
 };
@@ -113,18 +127,22 @@ const logoutUser=function(req,res){
   res.setHeader('Set-Cookie',[`loginFailed=false,Expires=${new Date(1).toUTCString()}`,`sessionid=0,Expires=${new Date(1).toUTCString()}`]);
   delete req.user.sessionid || {};
   res.redirect('/login.html');
-}
+};
+
+const getHomePage=function(req,res){
+  res.redirect('login.html')
+};
 
 let app = WebApp.create();
 
 app.use(logRequest);
 app.use(loadUser);
 
-app.get('/',(req,res)=>{res.redirect('login.html')});
+app.get('/',getHomePage);
 app.get('/login.html',getLoginPage);
 app.post('/login.html',validatePostUserData);
 app.get('/logout',logoutUser);
-
+app.get('/view.html',getViewPage);
 app.postprocess(serveStaticFiles);
 
 const PORT = 9000;
