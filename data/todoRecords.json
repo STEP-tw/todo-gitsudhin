@@ -30,27 +30,13 @@
     ]
   },
   {
-    "title": "next todo",
-    "description": "something",
-    "item": "hai%0D%0Ahello%0D%0Achill%0D%0Acool%0D%0A",
-    "username": "sudhin"
-  },
-  {
-    "title": "new",
-    "description": "description",
-    "item": "item%0D%0Aitem2",
-    "username": "sudhin"
-  },
-  {
-    "title": "",
-    "description": "",
-    "item": "",
-    "username": "sudhin"
-  },
-  {
-    "title": "hjskdaj",
-    "description": "sejknljnkj",
-    "item": "jnkljnkj%0D%0Aklkl%0D%0Akmlkmlk",
+    "title": "testing todo",
+    "description": "just a test",
+    "item": [
+      "item",
+      "items",
+      "itemss"
+    ],
     "username": "sudhin"
   }
 ]

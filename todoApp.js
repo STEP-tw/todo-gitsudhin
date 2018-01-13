@@ -79,12 +79,7 @@ const parseLinks=function(dbContent,req){
 
 const parseTodoToHTML=function(todoObj,req){
   let content=`<h2>${todoObj.title}</h2><br><h3>${todoObj.description}</h3>`;
-  let itemsList=todoObj.item;
-  if(req.method=='POST'){
-    itemsList=todoObj['item'].split('%0D%0A');
-    todoObj.item=itemsList;
-  }
-  itemsList.forEach((item)=>{
+  todoObj.item.forEach((item)=>{
     content+=`<br><br><input type="checkbox" >${item}`;
   });
   return content;
@@ -132,6 +127,8 @@ const postTodoAction=function(req,res){
   let dbContentList=JSON.parse(getFileContent('../data/todoRecords.json'));
 
   req.body.username=req.user.userName;
+  let itemsList=req.body['item'].split('%0D%0A');
+  req.body.item=itemsList;
   dbContentList.push(req.body);
 
   fs.writeFileSync('../data/todoRecords.json',JSON.stringify(dbContentList,null,2));
