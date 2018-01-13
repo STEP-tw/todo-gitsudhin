@@ -91,7 +91,8 @@ const main = function(req,res){
       finalware(req,res);
     });
     if(res.finished)return;
-    res.writeHead(404,{'content-type':'text/html'});
+    res.statusCode=404;
+    res.setHeader('content-type','text/html');
     res.write('<h1>Error:404 Resource Not Found !</h1>');
     res.end()
   });

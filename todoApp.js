@@ -77,15 +77,15 @@ const parseLinks=function(dbContent,req){
   return content;
 };
 
-const parseTodoToHTML=function(todoObj){
+const parseTodoToHTML=function(todoObj,req){
   let content=`<h2>${todoObj.title}</h2><br><h3>${todoObj.description}</h3>`;
-  delete todoObj['description'];
-  delete todoObj['title'];
-  delete todoObj['username'];
-  let itemsList=Object.keys(todoObj);
-
+  let itemsList=todoObj.item;
+  if(req.method=='POST'){
+    itemsList=todoObj['item'].split('%0D%0A');
+    todoObj.item=itemsList;
+  }
   itemsList.forEach((item)=>{
-    content+=`<br><br><input type="checkbox" >${todoObj[item]}`;
+    content+=`<br><br><input type="checkbox" >${item}`;
   });
   return content;
 };
@@ -99,11 +99,12 @@ const getLoginPage=function(req,res){
 };
 
 const getViewPage=function(req,res){
+
   let fileContent=getFileContent('../public/view.html');
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
 
   let todos=dbContent.find(todo=>todo.username==req.user.userName);
-  let parsedTodo=parseTodoToHTML(todos);
+  let parsedTodo=parseTodoToHTML(todos,req);
   let multipleTodos=parseLinks(dbContent,req);
 
   fileContent=fileContent.replace('_Preview',parsedTodo);
@@ -114,22 +115,32 @@ const getViewPage=function(req,res){
   res.end();
 };
 
+const redirectToLoginIfNotValidUser=function(req,res){
+  let user=getUserData(req);
+  if(!user){
+    res.redirect('/login.html');
+    return
+  }
+};
+
 const getCreateTodoAction=function(req,res){
-  
+
 };
 
 const postTodoAction=function(req,res){
 
   let dbContentList=JSON.parse(getFileContent('../data/todoRecords.json'));
+
   req.body.username=req.user.userName;
   dbContentList.push(req.body);
 
   fs.writeFileSync('../data/todoRecords.json',JSON.stringify(dbContentList,null,2));
 
   let fileContent=getFileContent('../public/create.html');
-  let parsedTodo=parseTodoToHTML(req.body);
+  let parsedTodo=parseTodoToHTML(req.body,req);
 
   fileContent=fileContent.replace('_Preview',parsedTodo);
+  fileContent=fileContent.replace('Visible','hidden');
   setContentType('../public/create.html',res);
 
   res.write(fileContent);
@@ -137,7 +148,6 @@ const postTodoAction=function(req,res){
 };
 
 const getUserData=function(req){
-  console.log(req.body);
   return registered_users.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
 };
 

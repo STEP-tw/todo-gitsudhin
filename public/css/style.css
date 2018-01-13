@@ -68,3 +68,6 @@
     from {opacity: 0;}
     to {opacity:1 ;}
 }
+#textbox{
+  width: 500px;
+}

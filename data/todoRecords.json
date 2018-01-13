@@ -3,84 +3,54 @@
     "username": "sudhin",
     "title": "My First todo",
     "description": "This is my first todo",
-    "item1": "Book bus ticket",
-    "item2": "Buy milk",
-    "item3": "Recharge mobile"
+    "item": [
+      "Book bus ticket",
+      "Buy milk",
+      "Recharge mobile"
+    ]
   },
   {
     "username": "sudhin",
     "title": "My second todo",
     "description": "This is my second todo",
-    "item1": "Book bus ticket",
-    "item2": "Have medicine",
-    "item3": "Recharge mobile"
+    "item": [
+      "Book bus ticket",
+      "Have medicine",
+      "Recharge mobile"
+    ]
   },
   {
     "username": "sreenadh",
     "title": "Sample todo",
     "description": "This is my first sample todo",
-    "item1": "Book train ticket",
-    "item2": "Buy soap",
-    "item3": "Recharge net"
+    "item": [
+      "Book bus ticket",
+      "Buy soap",
+      "Recharge net"
+    ]
   },
   {
-    "title": "Write test for this code",
-    "description": "This todo is meant to remind me to write test",
-    "item": "Move small function to a different file",
-    "username": "sreenadh"
+    "title": "next todo",
+    "description": "something",
+    "item": "hai%0D%0Ahello%0D%0Achill%0D%0Acool%0D%0A",
+    "username": "sudhin"
   },
   {
-    "title": "Testing code",
-    "description": "things to be followed",
-    "item": "write todo",
-    "username": "sreenadh"
+    "title": "new",
+    "description": "description",
+    "item": "item%0D%0Aitem2",
+    "username": "sudhin"
   },
   {
     "title": "",
     "description": "",
-    "item": "noted",
-    "username": "sreenadh"
+    "item": "",
+    "username": "sudhin"
   },
   {
-    "title": "new sample todo",
-    "description": "this is also a sample todo",
-    "item": "first item",
-    "username": "sreenadh"
-  },
-  {
-    "title": "sample todo",
-    "description": "this is also a sample todo",
-    "item": "sample first line",
-    "username": "sreenadh"
-  },
-  {
-    "title": "sample",
-    "description": "Description cool",
-    "item": "First item",
-    "username": "sreenadh"
-  },
-  {
-    "title": "sample",
-    "description": "Description cool",
-    "item": "item 1",
-    "username": "sreenadh"
-  },
-  {
-    "title": "sample",
-    "description": "Description cool",
-    "item": "hello",
-    "username": "sreenadh"
-  },
-  {
-    "title": "sdfgdg",
-    "description": "hai",
-    "item": "hello",
-    "username": "sreenadh"
-  },
-  {
-    "title": "hjgshfjh",
-    "description": "hahi",
-    "item": "hello",
-    "username": "sreenadh"
+    "title": "hjskdaj",
+    "description": "sejknljnkj",
+    "item": "jnkljnkj%0D%0Aklkl%0D%0Akmlkmlk",
+    "username": "sudhin"
   }
 ]

@@ -19,16 +19,16 @@
             <a href="index.html"><button name="home">Home</button></a>
             <a href="/logout"><button name="logout">Logout</button></a><br><br>
 
-            <form class="todoDetails" method="POST">
+            <form class="todoDetails" style='visibility:Visible' method="POST" >
               Title:<br>
-              <input type="text" name="title" value=""><br>
+              <input id="textbox" type="text" name="title" value=""><br>
               Description:<br>
-              <input type="text" name="description" value=""><br>
+              <input id="textbox" type="text" name="description" value=""><br>
               Item:<br>
-              <input type="text" name="item" value="">
+              <textarea id="itemTextArea" name="item" rows="10" cols="80"></textarea><br>
               <input type="submit"value="Add Item to Todo">
             </form>
-            <a href="/doneEditing"><button name="done">Done</button></a>
+            <!-- <a href="/doneEditing"><button name="done">Done</button></a> -->
           </div>
         </div>
         <div class="rightSideBlock">
