@@ -40,10 +40,11 @@ let serveStaticFiles=function(req,res){
   }
 };
 
-const parseDeleteButton=function(req,todoRecordsList,todoTitle){
+const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
   let todo=todoRecordsList.find(todo=>todo.title==todoTitle);
   let parsedTodo=parseTodoToHTML(todo,req);
   parsedTodo+=`<br><br><a href='/deleteTodo${todo.title}'><button name='delete${todo.title}'>Delete</button></a>`;
+  parsedTodo+=`<a href='/editTodo${todo.title}'><button name='edit${todo.title}'>Edit</button></a>`;
   return parsedTodo;
 };
 
@@ -53,13 +54,14 @@ const getMultipleTodoViewPageContent=function(req,res){
   let pageContent=getFileContent('../public/view.html');
   let multipleTodos=parseLinks(todoRecordsList,req);
 
-  let parsedTodo=parseDeleteButton(req,todoRecordsList,todoTitle);
+  let parsedTodo=parseDeleteEditButton(req,todoRecordsList,todoTitle);
   pageContent=pageContent.replace('_Preview',parsedTodo);
   pageContent=pageContent.replace('_Links',multipleTodos);
   return pageContent
 }
 
 let serveButtonActioninView=function(req,res){
+  let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
   if(req.url.startsWith('/viewTodo')){
 
     let pageContent=getMultipleTodoViewPageContent(req,res);
@@ -68,14 +70,39 @@ let serveButtonActioninView=function(req,res){
     res.end();
   }
   if(req.url.startsWith('/deleteTodo')){
-    
+
     let todoTitle=req.url.slice(11).replace(/%20/gi,' ');
-    let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
-    let content=dbContent.filter((todo)=>{
-      return todo.title != todoTitle;
-    });
+    let content=dbContent.filter((todo)=>{return todo.title != todoTitle});
 
     fs.writeFileSync('../data/todoRecords.json',JSON.stringify(content,null,2));
+    res.redirect('/view.html');
+  }
+  if(req.url.startsWith('/editTodo')&&req.method=='GET'){
+    let pageContent=getFileContent('../public/edit.html')
+    let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
+    let todo=dbContent.find(todoDetail=>todoDetail.title==todoTitle);
+
+    let items=todo.item.join(',');
+    items=items.replace(/,/gi,'\n');
+
+    let parsedForm=`<form class="todoDetails" method="POST">Title<br>`;
+    parsedForm+=`<input id="textbox" type="text" name=title value=${todo.title.replace(/\s/gi,'+')}><br>`;
+    parsedForm+=`Description<br><input id="textbox" type="text" name=description value=${todo.description.replace(/\s/gi,'+')}><br>`;
+    parsedForm+=`Items<br><textarea id="itemTextArea" name=item rows="10" cols="80">${items}</textarea><br>`;
+    parsedForm+=`<input type="submit"></form>`;
+
+    pageContent=pageContent.replace('_Element',parsedForm);
+    res.write(pageContent);
+    res.end();
+  }
+  if(req.url.startsWith('/editTodo')&&req.method=='POST'){
+    console.log(req.body);
+    let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
+    let todo=dbContent.find(todoDetail=>todoDetail.title==todoTitle);
+    todo.title=req.body.title.replace(/%2B/gi,' ');
+    todo.description=req.body.description.replace(/%2B/gi,' ');
+    todo.item=req.body.item.split('%0D%0A');
+    fs.writeFileSync('../data/todoRecords.json',JSON.stringify(dbContent,null,2));
     res.redirect('/view.html');
   }
 }

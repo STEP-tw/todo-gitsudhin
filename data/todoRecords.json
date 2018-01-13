@@ -5,7 +5,8 @@
     "item": [
       "mobile charger",
       "towel",
-      "toothbrush"
+      "toothbrush",
+      "paste"
     ],
     "username": "sudhin"
   },
@@ -14,7 +15,18 @@
     "description": "Routines that i should follow",
     "item": [
       "have food on time",
-      "have enough fruits"
+      "have enough fruits",
+      "drink water"
+    ],
+    "username": "sudhin"
+  },
+  {
+    "title": "Todo for study",
+    "description": "This is simple todo for my study",
+    "item": [
+      "Read well",
+      "take breaks",
+      "practice"
     ],
     "username": "sudhin"
   }
