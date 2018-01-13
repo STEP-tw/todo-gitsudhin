@@ -76,12 +76,14 @@ let serveButtonActioninView=function(req,res){
     res.end();
   }
   if(req.url.startsWith('/editTodo')&&req.method=='POST'){
-    console.log(req.body);
+
     let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
     let todo=dbContent.find(todoDetail=>todoDetail.title==todoTitle);
+
     todo.title=req.body.title.replace(/%2B/gi,' ');
     todo.description=req.body.description.replace(/%2B/gi,' ');
     todo.item=req.body.item.split('%0D%0A');
+
     fs.writeFileSync('../data/todoRecords.json',JSON.stringify(dbContent,null,2));
     res.redirect('/view.html');
   }
@@ -137,7 +139,7 @@ const parseLinks=function(dbContent,req){
 
   let content='';
   todosOfThisUser.forEach((todo)=>{
-    content+=`<input type='checkbox' ><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a><br>`;
+    content+=`<input type='checkbox' id='_cb${todo.title}' onclick=check() ><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a><br>`;
   });
   return content;
 };
@@ -145,7 +147,7 @@ const parseLinks=function(dbContent,req){
 const parseTodoToHTML=function(todoObj,req){
   let content=`<h2>${todoObj.title}</h2><br><h3>${todoObj.description}</h3>`;
   todoObj.item.forEach((item)=>{
-    content+=`<br><br><input type="checkbox" >${item}`;
+    content+=`<br><br><input type="checkbox" id='_cbItem${item}'>${item}`;
   });
   return content;
 };
@@ -225,7 +227,6 @@ const validatePostUserData=function(req,res){
 };
 
 const logoutUser=function(req,res){
-  console.log("Entering");
   res.setHeader('Set-Cookie',[`loginFailed=false,Expires=${new Date(1).toUTCString()}`,`sessionid=0,Expires=${new Date(1).toUTCString()}`]);
   delete req.user.sessionid || {};
   res.redirect('/login.html');

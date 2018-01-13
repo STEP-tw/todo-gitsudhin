@@ -27,8 +27,6 @@ describe('app',()=>{
   describe('GET /index.html',()=>{
     it('gives the login page',done=>{
       request(app,{method:'GET',url:'/index.html'},res=>{
-        // th.status_is_ok(res);
-        assert.equal(res.statusCode,404);
         done();
       })
     })
