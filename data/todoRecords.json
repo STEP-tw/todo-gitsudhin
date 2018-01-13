@@ -1,20 +1,20 @@
 [
   {
-    "title": "testing todo",
-    "description": "just a test",
+    "title": "todo for trip",
+    "description": "things to be taken with",
     "item": [
-      "item",
-      "items",
-      "itemss"
+      "mobile charger",
+      "towel",
+      "toothbrush"
     ],
     "username": "sudhin"
   },
   {
-    "title": "latest todo",
-    "description": "again testing",
+    "title": "Todo for diet",
+    "description": "Routines that i should follow",
     "item": [
-      "items",
-      "item"
+      "have food on time",
+      "have enough fruits"
     ],
     "username": "sudhin"
   }

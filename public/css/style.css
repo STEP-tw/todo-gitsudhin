@@ -61,8 +61,11 @@
   background: rgba(3, 3, 3, 0.31) ;
 }
 #homePageButtons{
-  width: 200px;
-  height: 30px;
+  font-family:Avenir;
+  color:rgb(45, 131, 245);
+  font-size: 25px;
+  width: 300px;
+  height: 60px;
 }
 @keyframes fadeIn {
     from {opacity: 0;}

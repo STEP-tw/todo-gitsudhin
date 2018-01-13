@@ -40,22 +40,43 @@ let serveStaticFiles=function(req,res){
   }
 };
 
+const parseDeleteButton=function(req,todoRecordsList,todoTitle){
+  let todo=todoRecordsList.find(todo=>todo.title==todoTitle);
+  let parsedTodo=parseTodoToHTML(todo,req);
+  parsedTodo+=`<br><br><a href='/deleteTodo${todo.title}'><button name='delete${todo.title}'>Delete</button></a>`;
+  return parsedTodo;
+};
+
+const getMultipleTodoViewPageContent=function(req,res){
+  let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
+  let todoRecordsList=JSON.parse(getFileContent('../data/todoRecords.json'));
+  let pageContent=getFileContent('../public/view.html');
+  let multipleTodos=parseLinks(todoRecordsList,req);
+
+  let parsedTodo=parseDeleteButton(req,todoRecordsList,todoTitle);
+  pageContent=pageContent.replace('_Preview',parsedTodo);
+  pageContent=pageContent.replace('_Links',multipleTodos);
+  return pageContent
+}
+
 let serveButtonActioninView=function(req,res){
   if(req.url.startsWith('/viewTodo')){
-    let todoTitle=req.url.slice(9).replace('%20',' ');
-    let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
-    let pageContent=getFileContent('../public/view.html');
 
-    let todo=dbContent.find(todo=>todo.title==todoTitle);
-    let parsedTodo=parseTodoToHTML(todo,req);
-    let multipleTodos=parseLinks(dbContent,req);
-
-    pageContent=pageContent.replace('_Preview',parsedTodo);
-    pageContent=pageContent.replace('_Links',multipleTodos);
-
+    let pageContent=getMultipleTodoViewPageContent(req,res);
     setContentType('../public/view.html',res);
     res.write(pageContent);
     res.end();
+  }
+  if(req.url.startsWith('/deleteTodo')){
+    
+    let todoTitle=req.url.slice(11).replace(/%20/gi,' ');
+    let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
+    let content=dbContent.filter((todo)=>{
+      return todo.title != todoTitle;
+    });
+
+    fs.writeFileSync('../data/todoRecords.json',JSON.stringify(content,null,2));
+    res.redirect('/view.html');
   }
 }
 
