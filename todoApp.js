@@ -40,26 +40,6 @@ let serveStaticFiles=function(req,res){
   }
 };
 
-const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
-  let todo=todoRecordsList.find(todo=>todo.title==todoTitle);
-  let parsedTodo=parseTodoToHTML(todo,req);
-  parsedTodo+=`<br><br><a href='/deleteTodo${todo.title}'><button name='delete${todo.title}'>Delete</button></a>`;
-  parsedTodo+=`<a href='/editTodo${todo.title}'><button name='edit${todo.title}'>Edit</button></a>`;
-  return parsedTodo;
-};
-
-const getMultipleTodoViewPageContent=function(req,res){
-  let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
-  let todoRecordsList=JSON.parse(getFileContent('../data/todoRecords.json'));
-  let pageContent=getFileContent('../public/view.html');
-  let multipleTodos=parseLinks(todoRecordsList,req);
-
-  let parsedTodo=parseDeleteEditButton(req,todoRecordsList,todoTitle);
-  pageContent=pageContent.replace('_Preview',parsedTodo);
-  pageContent=pageContent.replace('_Links',multipleTodos);
-  return pageContent
-}
-
 let serveButtonActioninView=function(req,res){
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
   if(req.url.startsWith('/viewTodo')){
@@ -107,6 +87,26 @@ let serveButtonActioninView=function(req,res){
   }
 }
 
+const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
+  let todo=todoRecordsList.find(todo=>todo.title==todoTitle);
+  let parsedTodo=parseTodoToHTML(todo,req);
+  parsedTodo+=`<br><br><a href='/deleteTodo${todo.title}'><button name='delete${todo.title}'>Delete</button></a>`;
+  parsedTodo+=`<a href='/editTodo${todo.title}'><button name='edit${todo.title}'>Edit</button></a>`;
+  return parsedTodo;
+};
+
+const getMultipleTodoViewPageContent=function(req,res){
+  let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
+  let todoRecordsList=JSON.parse(getFileContent('../data/todoRecords.json'));
+  let pageContent=getFileContent('../public/view.html');
+  let multipleTodos=parseLinks(todoRecordsList,req);
+
+  let parsedTodo=parseDeleteEditButton(req,todoRecordsList,todoTitle);
+  pageContent=pageContent.replace('_Preview',parsedTodo);
+  pageContent=pageContent.replace('_Links',multipleTodos);
+  return pageContent
+}
+
 const getContentType=function(extension){
   let contentType={
     '.html':'text/html',
@@ -135,12 +135,10 @@ const parseLinks=function(dbContent,req){
     return todo.username==req.user.userName;
   });
 
-  let content=`<ol>`;
+  let content='';
   todosOfThisUser.forEach((todo)=>{
-    content+=`<li><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a></li>`;
+    content+=`<input type='checkbox' ><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a><br>`;
   });
-
-  content+=`</ol>`;
   return content;
 };
 
