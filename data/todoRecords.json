@@ -1,41 +1,20 @@
 [
   {
-    "username": "sudhin",
-    "title": "My First todo",
-    "description": "This is my first todo",
-    "item": [
-      "Book bus ticket",
-      "Buy milk",
-      "Recharge mobile"
-    ]
-  },
-  {
-    "username": "sudhin",
-    "title": "My second todo",
-    "description": "This is my second todo",
-    "item": [
-      "Book bus ticket",
-      "Have medicine",
-      "Recharge mobile"
-    ]
-  },
-  {
-    "username": "sreenadh",
-    "title": "Sample todo",
-    "description": "This is my first sample todo",
-    "item": [
-      "Book bus ticket",
-      "Buy soap",
-      "Recharge net"
-    ]
-  },
-  {
     "title": "testing todo",
     "description": "just a test",
     "item": [
       "item",
       "items",
       "itemss"
+    ],
+    "username": "sudhin"
+  },
+  {
+    "title": "latest todo",
+    "description": "again testing",
+    "item": [
+      "items",
+      "item"
     ],
     "username": "sudhin"
   }

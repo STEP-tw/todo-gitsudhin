@@ -40,6 +40,25 @@ let serveStaticFiles=function(req,res){
   }
 };
 
+let serveButtonActioninView=function(req,res){
+  if(req.url.startsWith('/viewTodo')){
+    let todoTitle=req.url.slice(9).replace('%20',' ');
+    let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
+    let pageContent=getFileContent('../public/view.html');
+
+    let todo=dbContent.find(todo=>todo.title==todoTitle);
+    let parsedTodo=parseTodoToHTML(todo,req);
+    let multipleTodos=parseLinks(dbContent,req);
+
+    pageContent=pageContent.replace('_Preview',parsedTodo);
+    pageContent=pageContent.replace('_Links',multipleTodos);
+
+    setContentType('../public/view.html',res);
+    res.write(pageContent);
+    res.end();
+  }
+}
+
 const getContentType=function(extension){
   let contentType={
     '.html':'text/html',
@@ -70,7 +89,7 @@ const parseLinks=function(dbContent,req){
 
   let content=`<ol>`;
   todosOfThisUser.forEach((todo)=>{
-    content+=`<li><a href="/view.html"><button name="todo1">${todo.title}</button></a></li>`;
+    content+=`<li><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a></li>`;
   });
 
   content+=`</ol>`;
@@ -99,10 +118,8 @@ const getViewPage=function(req,res){
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
 
   let todos=dbContent.find(todo=>todo.username==req.user.userName);
-  let parsedTodo=parseTodoToHTML(todos,req);
   let multipleTodos=parseLinks(dbContent,req);
 
-  fileContent=fileContent.replace('_Preview',parsedTodo);
   fileContent=fileContent.replace('_Links',multipleTodos);
 
   setContentType('../public/view.html',res);
@@ -184,6 +201,7 @@ app.get('/logout',logoutUser);
 app.get('/view.html',getViewPage);
 app.post('/create.html',postTodoAction);
 app.get('/create.html',getCreateTodoAction);
+app.postprocess(serveButtonActioninView);
 app.postprocess(serveStaticFiles);
 
 module.exports=app;
