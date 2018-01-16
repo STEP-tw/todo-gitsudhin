@@ -29,5 +29,16 @@
       "practice"
     ],
     "username": "sudhin"
+  },
+  {
+    "title": "gym todo",
+    "description": "todo for things to be carried with",
+    "item": [
+      "Water Bottle",
+      "Egg",
+      "Mat",
+      "Gloves"
+    ],
+    "username": "sudhin"
   }
 ]

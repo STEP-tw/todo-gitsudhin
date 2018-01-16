@@ -1,6 +1,8 @@
-const timeStamp = require('./server/time.js').timeStamp;
-const WebApp = require('./server/webapp.js');
+const timeStamp = require('../server/time.js').timeStamp;
 const fs = require('fs');
+
+let handlerModules={};
+module.exports=handlerModules;
 
 let registered_users = [
   {userName:'sudhin',name:'Sudhin MN',password:'123'},
@@ -8,7 +10,62 @@ let registered_users = [
 
 let toStr = obj=>JSON.stringify(obj,null,2);
 
-let logRequest = (req,res)=>{
+const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
+  let todo=todoRecordsList.find(todo=>todo.title==todoTitle);
+  let parsedTodo=parseTodoToHTML(todo,req);
+  parsedTodo+=`<br><br><a href='/deleteTodo${todo.title}'><button name='delete${todo.title}'>Delete</button></a>`;
+  parsedTodo+=`<a href='/editTodo${todo.title}'><button name='edit${todo.title}'>Edit</button></a>`;
+  return parsedTodo;
+};
+
+handlerModules.getContentType=function(extension){
+  let contentType={
+    '.html':'text/html',
+    '.js':'text/js',
+    '.css':'text/css',
+    '.jpeg':'image/jpeg',
+    '.jpg':'image/jpg',
+    '.gif':'image/gif',
+    '.pdf':'application/pdf',
+  }
+  return contentType[extension];
+};
+
+handlerModules.setContentType=function(fileUrl,res){
+  let extension=fileUrl.slice(fileUrl.lastIndexOf('.'));
+  let contentType=this.getContentType(extension);
+  res.setHeader('content-type',contentType);
+};
+
+const getFileContent=function(file,encoding='utf8'){
+  return fs.readFileSync(file,encoding);
+};
+
+const parseLinks=function(dbContent,req){
+  let todosOfThisUser=dbContent.filter((todo)=>{
+    return todo.username==req.user.userName;
+  });
+
+  let content='';
+  todosOfThisUser.forEach((todo)=>{
+    content+=`<input type='checkbox' id='_cb${todo.title}' onclick=check() ><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a><br>`;
+  });
+  return content;
+};
+
+const parseTodoToHTML=function(todoObj,req){
+  let content=`<h2>${todoObj.title}</h2><br><h3>${todoObj.description}</h3>`;
+  todoObj.item.forEach((item)=>{
+    content+=`<br><br><input type="checkbox" id='_cbItem${item}'>${item}`;
+  });
+  return content;
+};
+
+const getUserData=function(req,regUsers=registered_users){
+  return regUsers.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
+};
+
+handlerModules.logRequest = function(req,res){
   let text = ['------------------------------',
     `${timeStamp()}`,
     `${req.method} ${req.url}`,
@@ -20,32 +77,44 @@ let logRequest = (req,res)=>{
   console.log(`${req.method} ${req.url}`);
 }
 
-let loadUser = (req,res)=>{
+handlerModules.loadUser = (req,res,registeredUsers=registered_users)=>{
   let sessionid = req.cookies.sessionid;
-  let user = registered_users.find(u=>u.sessionid==sessionid);
+  let user = registeredUsers.find(u=>u.sessionid==sessionid);
   if(sessionid && user){
     req.user = user;
   }
 };
 
-let serveStaticFiles=function(req,res){
+handlerModules.serveStaticFiles=function(req,res){
   let fileUrl='../public'+req.url;
   if(fs.existsSync(fileUrl)){
     try{
       let fileContent=getFileContent(fileUrl,null);
-      setContentType(fileUrl,res);
+      handlerModules.setContentType(fileUrl,res);
       res.write(fileContent);
       res.end();
     }catch(ex){}
   }
 };
 
-let serveButtonActioninView=function(req,res){
+handlerModules.getMultipleTodoViewPageContent=function(req,res){
+  let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
+  let todoRecordsList=JSON.parse(getFileContent('../data/todoRecords.json'));
+  let pageContent=getFileContent('../public/view.html');
+  let multipleTodos=parseLinks(todoRecordsList,req);
+
+  let parsedTodo=parseDeleteEditButton(req,todoRecordsList,todoTitle);
+  pageContent=pageContent.replace('_Preview',parsedTodo);
+  pageContent=pageContent.replace('_Links',multipleTodos);
+  return pageContent
+}
+
+handlerModules.serveButtonActioninView=function(req,res){
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
   if(req.url.startsWith('/viewTodo')){
 
-    let pageContent=getMultipleTodoViewPageContent(req,res);
-    setContentType('../public/view.html',res);
+    let pageContent=handlerModules.getMultipleTodoViewPageContent(req,res);
+    handlerModules.setContentType('../public/view.html',res);
     res.write(pageContent);
     res.end();
   }
@@ -89,79 +158,16 @@ let serveButtonActioninView=function(req,res){
   }
 }
 
-const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
-  let todo=todoRecordsList.find(todo=>todo.title==todoTitle);
-  let parsedTodo=parseTodoToHTML(todo,req);
-  parsedTodo+=`<br><br><a href='/deleteTodo${todo.title}'><button name='delete${todo.title}'>Delete</button></a>`;
-  parsedTodo+=`<a href='/editTodo${todo.title}'><button name='edit${todo.title}'>Edit</button></a>`;
-  return parsedTodo;
-};
-
-const getMultipleTodoViewPageContent=function(req,res){
-  let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
-  let todoRecordsList=JSON.parse(getFileContent('../data/todoRecords.json'));
-  let pageContent=getFileContent('../public/view.html');
-  let multipleTodos=parseLinks(todoRecordsList,req);
-
-  let parsedTodo=parseDeleteEditButton(req,todoRecordsList,todoTitle);
-  pageContent=pageContent.replace('_Preview',parsedTodo);
-  pageContent=pageContent.replace('_Links',multipleTodos);
-  return pageContent
-}
-
-const getContentType=function(extension){
-  let contentType={
-    '.html':'text/html',
-    '.js':'text/js',
-    '.css':'text/css',
-    '.jpeg':'image/jpeg',
-    '.jpg':'image/jpg',
-    '.gif':'image/gif',
-    '.pdf':'application/pdf',
-  }
-  return contentType[extension];
-};
-
-const setContentType=function(fileUrl,res){
-  let extension=fileUrl.slice(fileUrl.lastIndexOf('.'));
-  let contentType=getContentType(extension);
-  res.setHeader('content-type',contentType);
-};
-
-const getFileContent=function(file,encoding='utf8'){
-  return fs.readFileSync(file,encoding);
-};
-
-const parseLinks=function(dbContent,req){
-  let todosOfThisUser=dbContent.filter((todo)=>{
-    return todo.username==req.user.userName;
-  });
-
-  let content='';
-  todosOfThisUser.forEach((todo)=>{
-    content+=`<input type='checkbox' id='_cb${todo.title}' onclick=check() ><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a><br>`;
-  });
-  return content;
-};
-
-const parseTodoToHTML=function(todoObj,req){
-  let content=`<h2>${todoObj.title}</h2><br><h3>${todoObj.description}</h3>`;
-  todoObj.item.forEach((item)=>{
-    content+=`<br><br><input type="checkbox" id='_cbItem${item}'>${item}`;
-  });
-  return content;
-};
-
-const getIndexPage=function(req,res){
+handlerModules.getIndexPage=function(req,res){
   let fileContent=getFileContent('../public/index.html');
   fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
-  setContentType('../public/index.html',res);
+  handlerModules.setContentType('../public/index.html',res);
 
   res.write(fileContent);
   res.end();
 };
 
-const getLoginPage=function(req,res){
+handlerModules.getLoginPage=function(req,res){
   let fileContent=getFileContent('../public/login.html');
   res.setHeader('Content-type','text/html');
 
@@ -169,7 +175,7 @@ const getLoginPage=function(req,res){
   res.end();
 };
 
-const getViewPage=function(req,res){
+handlerModules.getViewPage=function(req,res){
 
   let fileContent=getFileContent('../public/view.html');
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
@@ -178,21 +184,21 @@ const getViewPage=function(req,res){
   fileContent=fileContent.replace('_Links',multipleTodos);
   fileContent=fileContent.replace('Hi User',` Hi ${req.user.userName}`);
 
-  setContentType('../public/view.html',res);
+  handlerModules.setContentType('../public/view.html',res);
   res.write(fileContent);
   res.end();
 };
 
-const getCreateTodoPage=function(req,res){
+handlerModules.getCreateTodoPage=function(req,res){
   let fileContent=getFileContent('../public/create.html');
   fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
-  setContentType('../public/create.html',res);
+  handlerModules.setContentType('../public/create.html',res);
 
   res.write(fileContent);
   res.end();
 };
 
-const postTodoAction=function(req,res){
+handlerModules.postTodoAction=function(req,res){
 
   let dbContentList=JSON.parse(getFileContent('../data/todoRecords.json'));
 
@@ -208,17 +214,13 @@ const postTodoAction=function(req,res){
 
   fileContent=fileContent.replace('_Preview',parsedTodo);
   fileContent=fileContent.replace('Visible','hidden');
-  setContentType('../public/create.html',res);
+  handlerModules.setContentType('../public/create.html',res);
 
   res.write(fileContent);
   res.end();
 };
 
-const getUserData=function(req){
-  return registered_users.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
-};
-
-const validatePostUserData=function(req,res){
+handlerModules.validatePostUserData=function(req,res){
   let user = getUserData(req);
   if(!user) {
     res.setHeader('Set-Cookie',[`logInFailed=true; Max-Age=5`]);
@@ -231,40 +233,20 @@ const validatePostUserData=function(req,res){
   res.redirect('/index.html');
 };
 
-const logoutUser=function(req,res){
+handlerModules.logoutUser=function(req,res){
   res.setHeader('Set-Cookie',[`loginFailed=false; Max-Age=5`,`sessionid=0`]);
   delete req.user.sessionid || {};
   res.redirect('/login.html');
 };
 
-const getHomePage=function(req,res){
+handlerModules.getHomePage=function(req,res){
   res.redirect('login.html')
 };
 
-let redirectLoggedInUserToHome = (req,res)=>{
+handlerModules.redirectLoggedInUserToHome = (req,res)=>{
   if(req.urlIsOneOf(['/','/login.html']) && req.user) res.redirect('/index.html');
 }
 
-let redirectLoggedOutUserToLogin = (req,res)=>{
+handlerModules.redirectLoggedOutUserToLogin = (req,res)=>{
   if(req.urlIsOneOf(['/','/index.html','/create.html','/view.html','/edit.html','/logout']) && !req.user) res.redirect('/login.html');
 }
-
-let app = WebApp.create();
-
-app.use(logRequest);
-app.use(loadUser);
-app.use(redirectLoggedInUserToHome);
-app.use(redirectLoggedOutUserToLogin);
-
-app.get('/',getHomePage);
-app.get('/login.html',getLoginPage);
-app.post('/login.html',validatePostUserData);
-app.get('/index.html',getIndexPage);
-app.get('/logout',logoutUser);
-app.get('/view.html',getViewPage);
-app.post('/create.html',postTodoAction);
-app.get('/create.html',getCreateTodoPage);
-app.postprocess(serveButtonActioninView);
-app.postprocess(serveStaticFiles);
-
-module.exports=app;

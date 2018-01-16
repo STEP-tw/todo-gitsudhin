@@ -3,7 +3,7 @@ let assert = chai.assert;
 let request = require('./requestSimulator.js');
 process.env.COMMENT_STORE = "./testStore.json";
 let WebApp = require('../server/webapp.js');
-let app = require('../todoApp.js');
+let app = require('../app/todoApp.js');
 let th = require('./testHelper.js');
 
 describe('app',()=>{

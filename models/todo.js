@@ -10,5 +10,4 @@ class Todo {
   getTitle(){
     return this.title;
   }
-
 }
