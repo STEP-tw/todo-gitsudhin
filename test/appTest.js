@@ -18,20 +18,40 @@ describe('app',()=>{
   describe('GET /',()=>{
     it('redirects to login.html',done=>{
       request(app,{method:'GET',url:'/'},(res)=>{
-        th.should_be_redirected_to(res,'login.html');
+        th.should_be_redirected_to(res,'/login.html');
+        done();
+      })
+    })
+    it('redirects to login.html',done=>{
+      request(app,{method:'GET',url:'/view.html'},(res)=>{
+        th.should_be_redirected_to(res,'/login.html');
+        done();
+      })
+    })
+    it('redirects to login.html',done=>{
+      request(app,{method:'GET',url:'/create.html'},(res)=>{
+        th.should_be_redirected_to(res,'/login.html');
         done();
       })
     })
     it.skip('redirects to index.html',done=>{
       request(app,{method:'GET',url:'/',headers:{cookies:[loginfailed=true]}},(res)=>{
-        th.should_be_redirected_to(res,'index.html');
+        th.should_be_redirected_to(res,'/index.html');
         done();
       })
     })
   })
   describe('GET /index.html',()=>{
-    it('gives the login page',done=>{
+    it('gives the login page if user not loggedin',done=>{
       request(app,{method:'GET',url:'/index.html'},res=>{
+        th.should_be_redirected_to(res,'/login.html');
+        done();
+      })
+    })
+    it('gives the home page if user loggedin',done=>{
+      request(app,{method:'GET',url:'/index.html',user:{userName:'sudhin',name:'Sudhin MN',password:'123'}},res=>{
+        th.status_is_ok(res);
+        th.body_contains(res,'Create new todo list');
         done();
       })
     })
@@ -82,6 +102,13 @@ describe('app',()=>{
       request(app,{method:'GET',url:'/create.html',user:{userName:'sudhin',name:'Sudhin MN',password:'123'}},res=>{
         th.status_is_ok(res);
         th.body_contains(res,'Create new todo');
+        th.content_type_is(res,'text/html');
+        done();
+      })
+    })
+    it('Redirects to login page if  no user loggedin',done=>{
+      request(app,{method:'GET',url:'/create.html'},res=>{
+        th.should_be_redirected_to(res,'/login.html');
         done();
       })
     })

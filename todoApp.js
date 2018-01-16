@@ -153,10 +153,6 @@ const parseTodoToHTML=function(todoObj,req){
 };
 
 const getIndexPage=function(req,res){
-  if(!req.user){
-    res.redirect('/login.html');
-    return
-  }
   let fileContent=getFileContent('../public/index.html');
   fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
   setContentType('../public/index.html',res);
@@ -178,11 +174,6 @@ const getViewPage=function(req,res){
   let fileContent=getFileContent('../public/view.html');
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
 
-  if(!req.user){
-    res.redirect('/login.html');
-    return
-  }
-
   let multipleTodos=parseLinks(dbContent,req);
   fileContent=fileContent.replace('_Links',multipleTodos);
   fileContent=fileContent.replace('Hi User',` Hi ${req.user.userName}`);
@@ -193,10 +184,6 @@ const getViewPage=function(req,res){
 };
 
 const getCreateTodoPage=function(req,res){
-  if(!req.user){
-    res.redirect('/login.html');
-    return
-  }
   let fileContent=getFileContent('../public/create.html');
   fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
   setContentType('../public/create.html',res);
@@ -254,10 +241,20 @@ const getHomePage=function(req,res){
   res.redirect('login.html')
 };
 
+let redirectLoggedInUserToHome = (req,res)=>{
+  if(req.urlIsOneOf(['/','/login.html']) && req.user) res.redirect('/index.html');
+}
+
+let redirectLoggedOutUserToLogin = (req,res)=>{
+  if(req.urlIsOneOf(['/','/index.html','/create.html','/view.html','/edit.html','/logout']) && !req.user) res.redirect('/login.html');
+}
+
 let app = WebApp.create();
 
 app.use(logRequest);
 app.use(loadUser);
+app.use(redirectLoggedInUserToHome);
+app.use(redirectLoggedOutUserToLogin);
 
 app.get('/',getHomePage);
 app.get('/login.html',getLoginPage);
