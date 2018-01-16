@@ -19,7 +19,12 @@ describe('app',()=>{
     it('redirects to login.html',done=>{
       request(app,{method:'GET',url:'/'},(res)=>{
         th.should_be_redirected_to(res,'login.html');
-        assert.equal(res.body,"");
+        done();
+      })
+    })
+    it.skip('redirects to index.html',done=>{
+      request(app,{method:'GET',url:'/',headers:{cookies:[loginfailed=true]}},(res)=>{
+        th.should_be_redirected_to(res,'index.html');
         done();
       })
     })
@@ -32,7 +37,7 @@ describe('app',()=>{
     })
   })
   describe('GET /login.html',()=>{
-    it.skip('serves the login page',done=>{
+    it('serves the login page',done=>{
       request(app,{method:'GET',url:'/login.html'},res=>{
         th.status_is_ok(res);
         th.body_contains(res,'Username');
@@ -44,54 +49,52 @@ describe('app',()=>{
   })
 
   describe('POST /login',()=>{
-    it.skip('redirects to index.html for valid user',done=>{
-      request(app,{method:'POST',url:'/login.html',body:'userName=sudhin'},res=>{
+    it('redirects to index.html for valid user',done=>{
+      request(app,{method:'POST',url:'/login.html',body:'userName=sudhin&pwd=123'},res=>{
         th.should_be_redirected_to(res,'/index.html');
         done();
       })
     })
     it('redirects to login.html with message for invalid user',done=>{
-      request(app,{method:'POST',url:'/login.html',body:'userName=badUser'},res=>{
+      request(app,{method:'POST',url:'/login.html',body:'userName=sudhin&pwd=1212'},res=>{
         th.should_be_redirected_to(res,'/login.html');
         done();
       })
     })
   })
-  describe.skip('GET /view',()=>{
-    it('serves the view page',done=>{
-      request(app,{method:'GET',url:'/view.html',body:'userName=sudhin'},res=>{
+  describe('GET /view',()=>{
+    it('serves the view page if user logged in',done=>{
+      request(app,{method:'GET',url:'/view.html',user:{userName:'sudhin',name:'Sudhin MN',password:'123'}},res=>{
         th.status_is_ok(res);
-        th.body_contains(res,'Your Todo s');
+        th.body_contains(res,'_Preview');
+        done();
+      })
+    })
+    it('serves login page if no user logged in',done=>{
+      request(app,{method:'GET',url:'/view.html'},res=>{
+        th.should_be_redirected_to(res,'/login.html');
         done();
       })
     })
   })
   describe('GET /create',()=>{
     it('serves the create todo page',done=>{
-      request(app,{method:'GET',url:'/create.html'},res=>{
-
-        done();
-      })
-    })
-  })
-  describe.skip('POST /create',()=>{
-    it('serves the create todo page',done=>{
-      request(app,{method:'POST',url:'/create.html',body:'userName=sudhin'},res=>{
-        th.should_be_redirected_to(res,'/create.html');
+      request(app,{method:'GET',url:'/create.html',user:{userName:'sudhin',name:'Sudhin MN',password:'123'}},res=>{
+        th.status_is_ok(res);
         th.body_contains(res,'Create new todo');
         done();
       })
     })
   })
-})
-
-
-describe.skip('Testing parser functions',()=>{
-  it('parseLink fn should return the html code for button link with title as name',done=>{
-    let expected=`<ol><li><a href="/view.html"><button name="todo1">my todo</button></a></li></ol>`;
-
-    request(app,{method:'GET',url:'view.html'},(res)=>{
-      assert.equal(app.parseLink([{"username":'sudhin',"title":"my todo"}],request),expected);
-    });
+  describe('POST /create',()=>{
+    it('serves the create todo page',done=>{
+      let options={method:'POST',url:'/create.html',user:{userName:'sudhin',name:'Sudhin MN',password:'123'},body:'title=newtodo&description=xxxx&item='};
+      request(app,options,res=>{
+        th.status_is_ok(res);
+        th.body_contains(res,'Create new todo');
+        th.body_contains(res,'newtodo');
+        done();
+      })
+    })
   })
 })

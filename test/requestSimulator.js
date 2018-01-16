@@ -5,6 +5,7 @@ let request = function(app,options,onComplete){
   let req = new EventEmitter();
   req.method = options.method;
   req.url = options.url;
+  req.user=options.user;
   req.headers = options.headers||{};
   let res={
     end:()=>{

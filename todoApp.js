@@ -152,6 +152,19 @@ const parseTodoToHTML=function(todoObj,req){
   return content;
 };
 
+const getIndexPage=function(req,res){
+  if(!req.user){
+    res.redirect('/login.html');
+    return
+  }
+  let fileContent=getFileContent('../public/index.html');
+  fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
+  setContentType('../public/index.html',res);
+
+  res.write(fileContent);
+  res.end();
+};
+
 const getLoginPage=function(req,res){
   let fileContent=getFileContent('../public/login.html');
   res.setHeader('Content-type','text/html');
@@ -165,26 +178,31 @@ const getViewPage=function(req,res){
   let fileContent=getFileContent('../public/view.html');
   let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
 
-  let todos=dbContent.find(todo=>todo.username==req.user.userName);
-  let multipleTodos=parseLinks(dbContent,req);
+  if(!req.user){
+    res.redirect('/login.html');
+    return
+  }
 
+  let multipleTodos=parseLinks(dbContent,req);
   fileContent=fileContent.replace('_Links',multipleTodos);
+  fileContent=fileContent.replace('Hi User',` Hi ${req.user.userName}`);
 
   setContentType('../public/view.html',res);
   res.write(fileContent);
   res.end();
 };
 
-const redirectToLoginIfNotValidUser=function(req,res){
-  let user=getUserData(req);
-  if(!user){
+const getCreateTodoPage=function(req,res){
+  if(!req.user){
     res.redirect('/login.html');
     return
   }
-};
+  let fileContent=getFileContent('../public/create.html');
+  fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
+  setContentType('../public/create.html',res);
 
-const getCreateTodoAction=function(req,res){
-
+  res.write(fileContent);
+  res.end();
 };
 
 const postTodoAction=function(req,res){
@@ -216,7 +234,7 @@ const getUserData=function(req){
 const validatePostUserData=function(req,res){
   let user = getUserData(req);
   if(!user) {
-    res.setHeader('Set-Cookie',[`logInFailed=true`,'Max-Age=5']);
+    res.setHeader('Set-Cookie',[`logInFailed=true; Max-Age=5`]);
     res.redirect('/login.html');
     return;
   }
@@ -227,7 +245,7 @@ const validatePostUserData=function(req,res){
 };
 
 const logoutUser=function(req,res){
-  res.setHeader('Set-Cookie',[`loginFailed=false,Expires=${new Date(1).toUTCString()}`,`sessionid=0,Expires=${new Date(1).toUTCString()}`]);
+  res.setHeader('Set-Cookie',[`loginFailed=false; Max-Age=5`,`sessionid=0`]);
   delete req.user.sessionid || {};
   res.redirect('/login.html');
 };
@@ -244,10 +262,11 @@ app.use(loadUser);
 app.get('/',getHomePage);
 app.get('/login.html',getLoginPage);
 app.post('/login.html',validatePostUserData);
+app.get('/index.html',getIndexPage);
 app.get('/logout',logoutUser);
 app.get('/view.html',getViewPage);
 app.post('/create.html',postTodoAction);
-app.get('/create.html',getCreateTodoAction);
+app.get('/create.html',getCreateTodoPage);
 app.postprocess(serveButtonActioninView);
 app.postprocess(serveStaticFiles);
 
