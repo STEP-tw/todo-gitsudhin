@@ -32,7 +32,7 @@
       "practice"
     ],
     "username": "sudhin",
-    "checked": true
+    "checked": false
   },
   {
     "title": "gym todo",
@@ -44,7 +44,7 @@
       "Gloves"
     ],
     "username": "sudhin",
-    "checked": true
+    "checked": false
   },
   {
     "title": "newtodo",
@@ -54,5 +54,27 @@
     ],
     "username": "sudhin",
     "checked": false
+  },
+  {
+    "title": "wedding of sachin",
+    "description": "This is the to-do for reminding me to take things to see her.",
+    "item": [
+      "Ring",
+      "Bouquet",
+      "Cash",
+      "Bike",
+      "Helmet",
+      "License"
+    ],
+    "username": "sreenadh",
+    "checked": false
+  },
+  {
+    "title": "newtodo",
+    "description": "xxxx",
+    "item": [
+      ""
+    ],
+    "username": "sudhin"
   }
 ]
