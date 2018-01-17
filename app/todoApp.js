@@ -17,6 +17,7 @@ app.get('/view.html',handlerModules.getViewPage);
 app.post('/create.html',handlerModules.postTodoAction);
 app.get('/create.html',handlerModules.getCreateTodoPage);
 app.postprocess(handlerModules.serveButtonActioninView);
+app.postprocess(handlerModules.markItemAsDone);
 app.postprocess(handlerModules.serveStaticFiles);
 
 module.exports=app;

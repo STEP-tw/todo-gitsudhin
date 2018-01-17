@@ -48,9 +48,19 @@ const parseLinks=function(dbContent,req){
 
   let content='';
   todosOfThisUser.forEach((todo)=>{
-    content+=`<input type='checkbox' id='_cb${todo.title}' onclick=check() ><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a><br>`;
+    if(isThisItemChecked(todo.title)){
+      content+=`<input type='checkbox' id='_cb${todo.title}' checked onclick=check() ><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a><br>`;
+    }else{
+      content+=`<input type='checkbox' id='_cb${todo.title}' onclick=check() ><a href='/viewTodo${todo.title}'><button name=${todo.title} >${todo.title}</button></a><br>`;
+    }
   });
   return content;
+};
+
+const isThisItemChecked=function(todoTitle){
+  let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
+  let todo=dbContent.find(todoDetail=>todoDetail.title==todoTitle);
+  return todo.checked
 };
 
 const parseTodoToHTML=function(todoObj,req){
@@ -94,6 +104,16 @@ handlerModules.serveStaticFiles=function(req,res){
       res.write(fileContent);
       res.end();
     }catch(ex){}
+  }
+};
+
+handlerModules.markItemAsDone=function(req,res){
+  let dbContent=JSON.parse(getFileContent('../data/todoRecords.json'));
+  if(req.url.startsWith('/markDone')){
+    let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
+    let todo=dbContent.find(todoDetail=>todoDetail.title==todoTitle);
+    todo.checked=true;
+    fs.writeFileSync('../data/todoRecords.json',JSON.stringify(dbContent,null,2));
   }
 };
 

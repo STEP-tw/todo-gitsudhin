@@ -6,9 +6,11 @@
       "mobile charger",
       "towel",
       "toothbrush",
-      "comb"
+      "comb",
+      "mat"
     ],
-    "username": "sudhin"
+    "username": "sudhin",
+    "checked": true
   },
   {
     "title": "Todo for diet",
@@ -18,7 +20,8 @@
       "have enough fruits",
       "drink water"
     ],
-    "username": "sudhin"
+    "username": "sudhin",
+    "checked": true
   },
   {
     "title": "Todo for study",
@@ -28,7 +31,8 @@
       "take breaks",
       "practice"
     ],
-    "username": "sudhin"
+    "username": "sudhin",
+    "checked": true
   },
   {
     "title": "gym todo",
@@ -39,6 +43,16 @@
       "Mat",
       "Gloves"
     ],
-    "username": "sudhin"
+    "username": "sudhin",
+    "checked": true
+  },
+  {
+    "title": "newtodo",
+    "description": "xxxx",
+    "item": [
+      ""
+    ],
+    "username": "sudhin",
+    "checked": false
   }
 ]
