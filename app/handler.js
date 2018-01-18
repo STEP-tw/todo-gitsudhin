@@ -18,25 +18,6 @@ const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
   return parsedTodo;
 };
 
-handlerModules.getContentType=function(extension){
-  let contentType={
-    '.html':'text/html',
-    '.js':'text/js',
-    '.css':'text/css',
-    '.jpeg':'image/jpeg',
-    '.jpg':'image/jpg',
-    '.gif':'image/gif',
-    '.pdf':'application/pdf',
-  }
-  return contentType[extension];
-};
-
-handlerModules.setContentType=function(fileUrl,res){
-  let extension=fileUrl.slice(fileUrl.lastIndexOf('.'));
-  let contentType=this.getContentType(extension);
-  res.setHeader('content-type',contentType);
-};
-
 const getFileContent=function(file,encoding='utf8'){
   return fs.readFileSync(file,encoding);
 };
@@ -75,6 +56,25 @@ const getUserData=function(req,regUsers=registered_users){
   return regUsers.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
 };
 
+handlerModules.getContentType=function(extension){
+  let contentType={
+    '.html':'text/html',
+    '.js':'text/js',
+    '.css':'text/css',
+    '.jpeg':'image/jpeg',
+    '.jpg':'image/jpg',
+    '.gif':'image/gif',
+    '.pdf':'application/pdf',
+  }
+  return contentType[extension];
+};
+
+handlerModules.setContentType=function(fileUrl,res){
+  let extension=fileUrl.slice(fileUrl.lastIndexOf('.'));
+  let contentType=this.getContentType(extension);
+  res.setHeader('content-type',contentType);
+};
+
 handlerModules.logRequest = function(req,res){
   let text = ['------------------------------',
     `${timeStamp()}`,
@@ -87,9 +87,9 @@ handlerModules.logRequest = function(req,res){
   console.log(`${req.method} ${req.url}`);
 }
 
-handlerModules.loadUser = (req,res,registeredUsers=registered_users)=>{
+handlerModules.loadUser = (req,res,regUsers=registered_users)=>{
   let sessionid = req.cookies.sessionid;
-  let user = registeredUsers.find(u=>u.sessionid==sessionid);
+  let user = regUsers.find(u=>u.sessionid==sessionid);
   if(sessionid && user){
     req.user = user;
   }
@@ -232,8 +232,8 @@ handlerModules.postTodoAction=function(req,res){
   let itemsList=req.body['item'].split('%0D%0A');
   req.body.item=itemsList;
   dbContentList.push(req.body);
-
-  fs.writeFileSync('../data/todoRecords.json',JSON.stringify(dbContentList,null,2));
+  let filePath=process.env.TODO_STORE || '../data/todoRecords.json';
+  fs.writeFileSync(filePath,JSON.stringify(dbContentList,null,2));
 
   let fileContent=getFileContent('../public/create.html');
   let parsedTodo=parseTodoToHTML(req.body,req);

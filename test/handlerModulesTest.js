@@ -45,4 +45,19 @@ describe('handlerModules',()=>{
       assert.deepEqual(headers,{'content-type':'text/css'});
     })
   })
+  describe('loadUser function should load registered user to req.user',()=>{
+    it('should add user object to req.user if sessionid,username and pwd matches',()=>{
+      let req={'cookies':{'sessionid':123}};
+      let regUsers=[{'userName':'sudhin','name':'Sudhin','pwd':'123','sessionid':123}];
+      let expected={'userName':'sudhin','name':'Sudhin','pwd':'123','sessionid':123};
+      app.loadUser(req,res={},regUsers);
+      assert.deepEqual(req.user,expected);
+    })
+    it('shouldnot add user object to req.user if sessionid not matches',()=>{
+      let req={'cookies':{'sessionid':0}};
+      let regUsers=[{'userName':'sudhin','name':'Sudhin','pwd':'123','sessionid':123}];
+      app.loadUser(req,res={},regUsers);
+      assert.deepEqual(req.user,undefined);
+    })
+  })
 })
