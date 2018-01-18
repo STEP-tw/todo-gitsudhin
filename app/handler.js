@@ -1,14 +1,19 @@
+const Users=require('../models/users.js');
+let users=new Users();
 const timeStamp = require('../server/time.js').timeStamp;
 const fs = require('fs');
 
 let handlerModules={};
 module.exports=handlerModules;
 
-let registered_users = [
-  {userName:'sudhin',name:'Sudhin MN',password:'123'},
-  {userName:'sreenadh',name:'Sreenadh S',password:'123'}];
-
 let toStr = obj=>JSON.stringify(obj,null,2);
+
+const loadRegisteredUsers=function(){
+  let regUsersList=JSON.parse(getFileContent('../data/registeredUsers.json'));
+  regUsersList.forEach((user)=>{
+    users.addUser(user.userName,user.password);
+  })
+};
 
 const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
   let todo=todoRecordsList.find(todo=>todo.title==todoTitle);
@@ -52,7 +57,7 @@ const parseTodoToHTML=function(todoObj,req){
   return content;
 };
 
-const getUserData=function(req,regUsers=registered_users){
+const getUserData=function(req,regUsers=users.getAllUsers()){
   return regUsers.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
 };
 
@@ -87,7 +92,7 @@ handlerModules.logRequest = function(req,res){
   console.log(`${req.method} ${req.url}`);
 }
 
-handlerModules.loadUser = (req,res,regUsers=registered_users)=>{
+handlerModules.loadUser = (req,res,regUsers=users.getAllUsers())=>{
   let sessionid = req.cookies.sessionid;
   let user = regUsers.find(u=>u.sessionid==sessionid);
   if(sessionid && user){
@@ -96,7 +101,7 @@ handlerModules.loadUser = (req,res,regUsers=registered_users)=>{
 };
 
 handlerModules.serveStaticFiles=function(req,res){
-  let fileUrl='../public'+req.url;
+  let fileUrl=req.url=='/' ? '../public/login.html' : '../public'+req.url;
   if(fs.existsSync(fileUrl)){
     try{
       let fileContent=getFileContent(fileUrl,null);
@@ -194,6 +199,7 @@ handlerModules.getIndexPage=function(req,res){
 };
 
 handlerModules.getLoginPage=function(req,res){
+  loadRegisteredUsers();
   let fileContent=getFileContent('../public/login.html');
   res.setHeader('Content-type','text/html');
 
