@@ -46,7 +46,6 @@ const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
 };
 
 const getFileContent=function(fs,file){
-  console.log(file);
   return fs.readFileSync(file,'utf8');
 };
 
@@ -67,7 +66,7 @@ const parseLinks=function(dbContent,req){
 };
 
 const isThisItemChecked=function(todoTitle){
-  let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json'));
+  let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
   let todo=dbContent.find(todoDetail=>todoDetail.title==todoTitle);
   return todo.checked
 };
@@ -136,7 +135,7 @@ handlerModules.serveStaticFiles=function(req,res){
 };
 
 handlerModules.markTodoStatus=function(req,res){
-  let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json'));
+  let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
   if(req.url.startsWith('/markDone')){
     let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
     let todo=dbContent.find(todoDetail=>todoDetail.title==todoTitle);
@@ -153,7 +152,7 @@ handlerModules.markTodoStatus=function(req,res){
 
 handlerModules.getMultipleTodoViewPageContent=function(req,res){
   let todoTitle=req.url.slice(9).replace(/%20/gi,' ');
-  let todoRecordsList=JSON.parse(getFileContent(fs,'../data/todoRecords.json'));
+  let todoRecordsList=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
   let pageContent=getFileContent(fs,'../public/view.html');
   let multipleTodos=parseLinks(todoRecordsList,req);
 
@@ -164,7 +163,7 @@ handlerModules.getMultipleTodoViewPageContent=function(req,res){
 }
 
 handlerModules.serveButtonActioninView=function(req,res){
-  let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json'));
+  let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
   if(req.url.startsWith('/viewTodo')){
 
     let pageContent=handlerModules.getMultipleTodoViewPageContent(req,res);
@@ -232,7 +231,7 @@ handlerModules.getLoginPage=function(req,res){
 handlerModules.getViewPage=function(req,res){
 
   let fileContent=getFileContent(fs,'../public/view.html');
-  let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json'));
+  let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
 
   let multipleTodos=parseLinks(dbContent,req);
   fileContent=fileContent.replace('_Links',multipleTodos);
@@ -254,7 +253,7 @@ handlerModules.getCreateTodoPage=function(req,res){
 
 handlerModules.postTodoAction=function(req,res){
 
-  let dbContentList=JSON.parse(getFileContent(fs,'../data/todoRecords.json'));
+  let dbContentList=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
 
   req.body.username=req.user.userName;
   let itemsList=req.body['item'].split('%0D%0A');
