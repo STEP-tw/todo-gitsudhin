@@ -1,12 +1,8 @@
 const Todo=require('./todo.js');
 class User{
   constructor(name,pwd){
-    this.userName=name;
-    this.password=pwd;
+    this.name=name;
     this.todoList=[];
-  }
-  hasSameUsernameAndPwd(userName,pwd) {
-    return this.userName==userName && this.password==pwd;
   }
   addTodo(title,description) {
     let newTodo=new Todo(title,description);
@@ -56,6 +52,15 @@ class User{
   }
   isTodoTicked(id){
     return this.todoList[id].isTodoDone();
+  }
+  markTodoItemAsDone(todoId,id){
+    return this.todoList[todoId].markAnItemDone(id);
+  }
+  markTodoItemAsNotDone(todoId,id){
+    return this.todoList[todoId].markAnItemNotDone(id);
+  }
+  isItemTicked(todoId,id){
+    return this.todoList[todoId].checkItemStatus(id);
   }
 }
 module.exports=User;

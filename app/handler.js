@@ -1,4 +1,4 @@
-const Users=require('../models/users.js');
+const Users=require('../models/userManager.js');
 let users=new Users();
 const timeStamp = require('../server/time.js').timeStamp;
 const fs = require('fs');

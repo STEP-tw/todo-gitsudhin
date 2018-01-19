@@ -3,16 +3,24 @@ let User=require('../models/user.js');
 
 describe('User',()=>{
   beforeEach(()=>{
-    user = new User('sudhin','123');
+    user = new User('sudhin');
   })
-  describe('1.hasSameUsernameAndPwd',()=>{
-    it('Should return true if given username and pwd matches',()=>{
-      assert.ok(user.hasSameUsernameAndPwd('sudhin','123'));
+  describe('1.getTodoOf',()=>{
+    it('Should give a todo with given id',()=>{
+      user.addTodo('sampleTodo1','sample');
+      let input=user.getTodoOf(0);
+      let expected={
+        "checked": false,
+        "description": "sample",
+        "title": "sampleTodo1",
+        "todoItems":[]};
+      assert.deepEqual(input,expected);
     })
-    it('Should return false if given username and pwd  not matches',()=>{
-      assert.notOk(user.hasSameUsernameAndPwd('Ketan','123'));
-      assert.notOk(user.hasSameUsernameAndPwd('Sudhin','123'));
-      assert.notOk(user.hasSameUsernameAndPwd('sudhin','124'));
+    it('Should give an empty object if id is invalid',()=>{
+      user.addTodo('sampleTodo1','sample');
+      let input=user.getTodoOf(1);
+      let expected={};
+      assert.deepEqual(input,expected);
     })
   })
   describe('2.addTodo',()=>{
@@ -173,25 +181,7 @@ describe('User',()=>{
       assert.deepEqual(input,expected);
     })
   })
-  describe('14.getTodoOf',()=>{
-    it('Should give a todo with given id',()=>{
-      user.addTodo('sampleTodo1','sample');
-      let input=user.getTodoOf(0);
-      let expected={
-        "checked": false,
-        "description": "sample",
-        "title": "sampleTodo1",
-        "todoItems":[]};
-      assert.deepEqual(input,expected);
-    })
-    it('Should give an empty object if id is invalid',()=>{
-      user.addTodo('sampleTodo1','sample');
-      let input=user.getTodoOf(1);
-      let expected={};
-      assert.deepEqual(input,expected);
-    })
-  })
-  describe('15.editTodoDescriptionOf',()=>{
+  describe('14.editTodoDescriptionOf',()=>{
     it('Should change description of a todo with same id',()=>{
       user.addTodo('sampleTodo1','sample');
       user.editTodoDescriptionOf(0,'newSample');
@@ -202,6 +192,22 @@ describe('User',()=>{
         "title": "sampleTodo1",
         "todoItems":[]};
       assert.deepEqual(input,expected);
+    })
+  })
+  describe('15.markTodoItemAsNotDone',()=>{
+    it('Should untick todo item',()=>{
+      user.addTodo('sampleTodo1','sample');
+      user.addTodoItem(0,'sampleItem');
+      user.markTodoItemAsNotDone(0,0);
+      assert.notOk(user.isTodoTicked(0));
+    })
+  })
+  describe('16.markTodoItemAsDone',()=>{
+    it('Should tick todo item',()=>{
+      user.addTodo('sampleTodo1','sample');
+      user.addTodoItem(0,'sampleItem');
+      user.markTodoItemAsDone(0,0);
+      assert.ok(user.isItemTicked(0,0));
     })
   })
 })

@@ -18,17 +18,17 @@ describe('Todo',()=>{
     })
   })
   describe('3.getItem',()=>{
-    it('getItem should give item matches the text',()=>{
+    it('getItem should give item of given id',()=>{
       todo.addItem('Buy milk');
       todo.addItem('Buy bottle');
       let expected={text:'Buy milk',_isDone:false};
-      assert.deepEqual(todo.getItem('Buy milk'),expected);
+      assert.deepEqual(todo.getItem(0),expected);
     })
-    it('getItem should give empty object if no match found',()=>{
+    it('getItem should give empty object if id does not exist',()=>{
       todo.addItem('Buy milk');
       todo.addItem('Buy bottle');
       let expected={};
-      assert.deepEqual(todo.getItem('Buy dress'),expected);
+      assert.deepEqual(todo.getItem(2),expected);
     })
   })
   describe('4.getAllItem',()=>{
@@ -47,7 +47,7 @@ describe('Todo',()=>{
     it('deleteItem should delete an item matches the input text',()=>{
       todo.addItem('Buy milk');
       todo.addItem('Buy bottle');
-      todo.deleteItem('Buy bottle');
+      todo.deleteItem(1);
 
       let expected=[{text:'Buy milk',_isDone:false}];
       assert.deepEqual(todo.getAllItems(),expected);
@@ -55,7 +55,7 @@ describe('Todo',()=>{
     it('deleteItem should not delete any item if no match is found',()=>{
       todo.addItem('Buy milk');
       todo.addItem('Buy bottle');
-      todo.deleteItem('Buy dress');
+      todo.deleteItem(3);
 
       let expected=[{text:'Buy milk',_isDone:false},{text:'Buy bottle',_isDone:false}];
       assert.deepEqual(todo.getAllItems(),expected);
@@ -64,18 +64,18 @@ describe('Todo',()=>{
   describe('6.markAnItemDone',()=>{
     it('markAnItemDone should mark checked status as true',()=>{
       todo.addItem('Buy milk');
-      todo.markAnItemDone('Buy milk');
+      todo.markAnItemDone(0);
       let expected={text:'Buy milk',_isDone:true};
-      assert.deepEqual(todo.getItem('Buy milk'),expected);
+      assert.deepEqual(todo.getItem(0),expected);
     })
   })
   describe('7.markAnItemNotDone',()=>{
     it('markAnItemNotDone should mark checked status as false',()=>{
       todo.addItem('Buy milk');
-      todo.markAnItemDone('Buy milk');
-      todo.markAnItemNotDone('Buy milk');
+      todo.markAnItemDone(0);
+      todo.markAnItemNotDone(0);
       let expected={text:'Buy milk',_isDone:false};
-      assert.deepEqual(todo.getItem('Buy milk'),expected);
+      assert.deepEqual(todo.getItem(0),expected);
     })
   })
   describe('8.markTodoAsDone',()=>{
@@ -124,15 +124,29 @@ describe('Todo',()=>{
   describe('14.editAnItem',()=>{
     beforeEach(()=>{
       todo.addItem('Buy milk');
-      todo.editAnItem("Buy milk","dont buy");
+      todo.editAnItem(0,"dont buy");
     })
 
     it('editAnItem should change text of item',()=>{
       let expected={text:"dont buy",_isDone:false};
-      assert.deepEqual(todo.getItem("dont buy"),expected);
+      assert.deepEqual(todo.getItem(0),expected);
     })
     it('editAnItem should delete old text after editing',()=>{
-      assert.deepEqual(todo.getItem("Buy milk"),{});
+      assert.deepEqual(todo.getItem(1),{});
+    })
+  })
+  describe('15.checkItemStatus',()=>{
+    beforeEach(()=>{
+      todo.addItem('Buy milk');
+      todo.editAnItem(0,"dont buy");
+    })
+
+    it('should return false initially',()=>{
+      assert.notOk(todo.checkItemStatus(0));
+    })
+    it('should return true if status is changed',()=>{
+      todo.markAnItemDone(0);
+      assert.ok(todo.checkItemStatus(0));
     })
   })
 })

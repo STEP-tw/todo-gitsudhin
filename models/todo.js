@@ -16,8 +16,8 @@ class Todo {
     let newItem=new TodoItem(text);
     this.todoItems.push(newItem);
   }
-  getItem(text) {
-    return this.todoItems.find((item)=>{return item.text==text}) || {};
+  getItem(id) {
+    return this.todoItems[id] || {};
   }
   getAllItems(){
     return this.todoItems || [];
@@ -28,22 +28,20 @@ class Todo {
   editDescription(text) {
     return this.description=text;
   }
-  editAnItem(oldText,text) {
-    let item=this.getItem(oldText);
-    item.text=text;
+  editAnItem(id,text) {
+    this.todoItems[id].text=text;
   }
-  deleteItem(text) {
-    let item=this.getItem(text);
-    let index=this.todoItems.indexOf(item);
-    if (index>=0) this.todoItems.splice(index,1);
+  deleteItem(id) {
+    return this.todoItems.splice(id,1);
   }
-  markAnItemDone(text) {
-    let item=this.getItem(text);
-    item._isDone=true;
+  markAnItemDone(id) {
+    return this.todoItems[id].markAsDone();
   }
-  markAnItemNotDone(text) {
-    let item=this.getItem(text);
-    item._isDone=false;
+  markAnItemNotDone(id) {
+    return this.todoItems[id].markAsNotDone();
+  }
+  checkItemStatus(id) {
+    return this.todoItems[id].isDone();
   }
   markTodoAsDone() {
     this.checked=true;
