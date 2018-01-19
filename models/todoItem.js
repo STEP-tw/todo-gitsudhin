@@ -1,13 +1,16 @@
 class TodoItem{
-  constructor(item){
-    this.item=item;
-    this.itemChecked=false;
+  constructor(text){
+    this.text=text;
+    this._isDone=false;
   }
-  markAnItemAsDone(item){
-    this.itemChecked=true;
+  markAsDone() {
+    return this._isDone=true;
   }
-  markAnItemAsNotDone(item){
-    this.itemChecked=false;
+  markAsNotDone() {
+    return this._isDone=false;
+  }
+  isDone() {
+    return this._isDone;
   }
 }
 module.exports=TodoItem;
