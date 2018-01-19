@@ -1,36 +1,61 @@
 const Todo=require('./todo.js');
 class User{
-  constructor(name,pwd,sessionid){
+  constructor(name,pwd){
     this.userName=name;
     this.password=pwd;
     this.todoList=[];
   }
-  hasSameUsernameAndPwd(userName,pwd){
+  hasSameUsernameAndPwd(userName,pwd) {
     return this.userName==userName && this.password==pwd;
   }
-  addTodo(title,description,items){
+  addTodo(title,description) {
     let newTodo=new Todo(title,description);
-    return newTodo.addItems(items);
+    this.todoList.push(newTodo);
   }
-  getAllTodo(){
+  addTodoItem(id,item) {
+    return this.todoList[id] && item.length>0 && this.todoList[id].addItem(item);
+  }
+  editTodoItem(id,item) {
+    return this.todoList[id] && item.length>0 && this.todoList[id].addItem(item);
+  }
+  deleteTodoItemOf(todoId,itemId){
+    return this.todoList[todoId] && this.todoList[todoId].deleteItem(itemId);
+  }
+  getTodoOf(todoId){
+    return this.todoList[todoId] || {};
+  }
+  getAllTodos() {
     return this.todoList;
+  }
+  getTodoItemsOf(id) {
+    return this.todoList[id] && this.todoList[id].getAllItems();
+  }
+  getTodoTitles() {
+    return this.todoList.map(function (todo) {
+      return todo.title;
+    })
+  }
+  editTodoTitleOf(todoId,newTitle) {
+    return this.todoList[todoId] && this.todoList[todoId].editTitle(newTitle);
+  }
+  editTodoDescriptionOf(todoId,description) {
+    return this.todoList[todoId] && this.todoList[todoId].editDescription(description);
   }
   findATodo(todoTitle){
     let todo=this.todoList.find((todo)=>{return todo.title==todoTitle});
     return todo;
   }
-  deleteATodo(todoTitle){
-    let todo=this.findATodo(todoTitle);
-    let index=this.todoList.findIndex((todo)=>{ return todo.title==todoTitle });
-    this.todoList.splice(index,1);
+  deleteATodo(id){
+    this.todoList.splice(id,1);
   }
-  markATodoDone(todoTitle){
-    let todo=this.findATodo(todoTitle);
-    return todo.markTodoAsDone();
+  markATodoDone(id){
+    return this.todoList[id].markTodoAsDone();
   }
-  markATodoNotDone(todoTitle){
-    let todo=this.findATodo(todoTitle);
-    return todo.markTodoAsNotDone();
+  markATodoNotDone(id){
+    return this.todoList[id].markTodoAsNotDone();
+  }
+  isTodoTicked(id){
+    return this.todoList[id].isTodoDone();
   }
 }
 module.exports=User;
