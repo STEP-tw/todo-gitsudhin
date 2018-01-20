@@ -2,11 +2,11 @@ let chai = require('chai');
 let assert = chai.assert;
 let request = require('./requestSimulator.js');
 process.env.TODO_STORE = "./testStore.json";
-let WebApp = require('../server/webapp.js');
-let app = require('../app/todoApp.js');
+let WebApp = require('../webapp.js');
+let app = require('../todoApp.js');
 let th = require('./testHelper.js');
 
-describe('app',()=>{
+describe.skip('app',()=>{
   describe.skip('GET /bad',()=>{
     it('responds with 404',done=>{
       request(app,{method:'GET',url:'/bad'},(res)=>{

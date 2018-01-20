@@ -11,14 +11,14 @@ class StaticFileHandler extends DefaultHandler {
   execute(req,res){
     let filePath=this.getPath(req.url);
     if (fs.existsSync(filePath)){
-      let fileText = fs.readFileSync(filePath,'utf-8');
+      let fileText = fs.readFileSync(filePath);
       res.write(fileText);
       res.end();
       return;
     }
-    this.handleUnsupportedURL(req,res);
+    this.handleInvalidURL(req,res);
   }
-  handleUnsupportedURL(req,res){
+  handleInvalidURL(req,res){
     res.statusCode=404;
     res.write(`${req.url} not found`);
     res.end();
