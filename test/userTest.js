@@ -31,8 +31,7 @@ describe('User',()=>{
     })
     it('Should not add todo if title is empty',()=>{
       user.addTodo('','sample');
-      let expected=['sampleTodo'];
-      assert.notDeepEqual(user.getTodoTitles(),expected);
+      assert.deepEqual(user.getTodoTitles(),[]);
     })
   })
   describe('3.addTodoItem',()=>{

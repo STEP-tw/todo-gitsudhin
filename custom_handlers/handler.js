@@ -9,22 +9,6 @@ let reg_users=[{"userName":"sudhin","name":"Sudhin MN","password":"123"}];
 
 let toStr = obj=>JSON.stringify(obj,null,2);
 
-const getDummyUser=function(){
-  let dummyUser=`[
-  {
-    "userName": "sudhin",
-    "password": "123",
-    "todoList": [
-      {
-        "title": "Sample todo",
-        "description": "for testing",
-        "todoItems": [ { "item": "Tesing item 1","checked": false } ]
-      }
-    ]
-  }]`;
-  return dummyuser;
-}
-
 handlerModules.logRequest = function(req,res){
   let text = ['------------------------------',
     `${req.method} ${req.url}`,
@@ -57,10 +41,6 @@ handlerModules.validateUser=function(req,res){
   res.setHeader('Set-Cookie',`sessionid=${sessionid}`);
   user.sessionid = sessionid;
   res.redirect('/index.html');
-};
-
-const getUserData=function(req,regUsers=reg_users){
-  return regUsers.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
 };
 
 handlerModules.logoutUser=function(req,res){
@@ -106,7 +86,8 @@ handlerModules.createTodo=function (req,res) {
   addItems(user,id,items);
   res.redirect('/index.html');
 }
-let addItems=function(user,id,items){
+
+const addItems=function(user,id,items){
   if (typeof items == 'string') {
     user.addTodoItem(id,items);
   }if (typeof items =='object') {
@@ -115,9 +96,30 @@ let addItems=function(user,id,items){
     });
   }
 }
+
 const getFileContent=function(fs,file){
   return fs.readFileSync(file,'utf8');
 };
+
+const getUserData=function(req,regUsers=reg_users){
+  return regUsers.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
+};
+
+const getDummyUser=function(){
+  let dummyUser=`[
+  {
+    "userName": "sudhin",
+    "password": "123",
+    "todoList": [
+      {
+        "title": "Sample todo",
+        "description": "for testing",
+        "todoItems": [ { "item": "Tesing item 1","checked": false } ]
+      }
+    ]
+  }]`;
+  return dummyuser;
+}
 
 //
 // const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){

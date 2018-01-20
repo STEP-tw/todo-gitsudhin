@@ -18,9 +18,8 @@ app.use(handlerModules.redirectLoggedOutUserToLogin);
 app.post('/login.html',handlerModules.validateUser);
 app.get('/index.html',handlerModules.getIndexPage);
 app.get('/logout',handlerModules.logoutUser);
-// app.get('/view.html',handlerModules.ggetViewTodo);
-// app.post('/create.html',handlerModules.createTodo);
-// app.get('/create.html',handlerModules.getCreateTodoPage);
+// app.get('/view.html',handlerModules.getViewTodo);
+app.post('/create.html',handlerModules.createTodo);
 
 app.postprocess(handlers.requestHandler());
 // app.postprocess(handlerModules.serveButtonActioninView);

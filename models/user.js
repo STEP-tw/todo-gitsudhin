@@ -5,8 +5,10 @@ class User{
     this.todoList=[];
   }
   addTodo(title,description) {
-    let newTodo=new Todo(title,description);
-    this.todoList.push(newTodo);
+    if (title.length>0) {
+      let newTodo=new Todo(title,description);
+      this.todoList.push(newTodo);
+    }
   }
   addTodoItem(id,item) {
     return this.todoList[id] && item.length>0 && this.todoList[id].addItem(item);
