@@ -1,5 +1,5 @@
 const Users=require('../models/userManager.js');
-let users=new Users();
+let userManager=new Users();
 const fs = require('fs');
 
 let handlerModules={};
@@ -25,17 +25,6 @@ const getDummyUser=function(){
   return dummyuser;
 }
 
-const loadRegisteredUsers=function(fs){
-  if(!fs.existsSync('../data/registeredUsers.json')){
-    let regUsersList=JSON.parse(getFileContent(fs,'../data/registeredUsers.json'));
-  }else{
-    let regUsersList=JSON.parse(getDummyUser());
-  }
-  regUsersList.forEach((user)=>{
-    users.addUser(user.userName,user.password);
-  })
-};
-
 handlerModules.logRequest = function(req,res){
   let text = ['------------------------------',
     `${req.method} ${req.url}`,
@@ -58,14 +47,20 @@ handlerModules.loadUser = (req,res,regUsers=reg_users)=>{
 handlerModules.validateUser=function(req,res){
   let user = getUserData(req);
   if(!user) {
+    console.log('no user logged in');
     res.setHeader('Set-Cookie',[`logInFailed=true; Max-Age=5`]);
     res.redirect('/login.html');
     return;
   }
+  userManager.addUser(user.userName);
   let sessionid = new Date().getTime();
   res.setHeader('Set-Cookie',`sessionid=${sessionid}`);
   user.sessionid = sessionid;
   res.redirect('/index.html');
+};
+
+const getUserData=function(req,regUsers=reg_users){
+  return regUsers.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
 };
 
 handlerModules.logoutUser=function(req,res){
@@ -81,6 +76,49 @@ handlerModules.redirectLoggedInUserToHome = (req,res)=>{
 handlerModules.redirectLoggedOutUserToLogin = (req,res)=>{
   if(req.urlIsOneOf(['/','/index.html','/create.html','/view.html','/edit.html','/logout']) && !req.user) res.redirect('/login.html');
 }
+
+handlerModules.getContentType=function(extension){
+  let contentType={
+    '.html':'text/html',
+    '.js':'text/js',
+    '.css':'text/css',
+    '.jpeg':'image/jpeg',
+    '.jpg':'image/jpg',
+    '.gif':'image/gif',
+    '.pdf':'application/pdf',
+  }
+  return contentType[extension];
+};
+
+handlerModules.setContentType=function(fileUrl,res){
+  let extension=fileUrl.slice(fileUrl.lastIndexOf('.'));
+  let contentType=this.getContentType(extension);
+  res.setHeader('content-type',contentType);
+};
+
+handlerModules.createTodo=function (req,res) {
+  let title=req.body.title;
+  let description=req.body.description;
+  let user=userManager.getUser(req.user.userName);
+  let items=req.body.item;
+  user.addTodo(title,description);
+  let id=user.getTodoTitles().length-1;
+  addItems(user,id,items);
+  res.redirect('/index.html');
+}
+let addItems=function(user,id,items){
+  if (typeof items == 'string') {
+    user.addTodoItem(id,items);
+  }if (typeof items =='object') {
+    items.forEach(function (item) {
+      user.addTodoItem(id,item);
+    });
+  }
+}
+const getFileContent=function(fs,file){
+  return fs.readFileSync(file,'utf8');
+};
+
 //
 // const parseDeleteEditButton=function(req,todoRecordsList,todoTitle){
 //   let todo=todoRecordsList.find(todo=>todo.title==todoTitle);
@@ -90,10 +128,18 @@ handlerModules.redirectLoggedOutUserToLogin = (req,res)=>{
 //   return parsedTodo;
 // };
 //
-// const getFileContent=function(fs,file){
-//   return fs.readFileSync(file,'utf8');
-// };
 //
+// const loadRegisteredUsers=function(fs){
+//   if(!fs.existsSync('../data/registeredUsers.json')){
+//     let regUsersList=JSON.parse(getFileContent(fs,'../data/registeredUsers.json'));
+//   }else{
+//     let regUsersList=JSON.parse(getDummyUser());
+//   }
+//   regUsersList.forEach((user)=>{
+//     users.addUser(user.userName);
+//   })
+// };
+
 // const parseLinks=function(dbContent,req){
 //   let todosOfThisUser=dbContent.filter((todo)=>{
 //     return todo.username==req.user.userName;
@@ -124,28 +170,6 @@ handlerModules.redirectLoggedOutUserToLogin = (req,res)=>{
 //   return content;
 // };
 //
-// const getUserData=function(req,regUsers=reg_users){
-//   return regUsers.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
-// };
-//
-// handlerModules.getContentType=function(extension){
-//   let contentType={
-//     '.html':'text/html',
-//     '.js':'text/js',
-//     '.css':'text/css',
-//     '.jpeg':'image/jpeg',
-//     '.jpg':'image/jpg',
-//     '.gif':'image/gif',
-//     '.pdf':'application/pdf',
-//   }
-//   return contentType[extension];
-// };
-//
-// handlerModules.setContentType=function(fileUrl,res){
-//   let extension=fileUrl.slice(fileUrl.lastIndexOf('.'));
-//   let contentType=this.getContentType(extension);
-//   res.setHeader('content-type',contentType);
-// };
 //
 // handlerModules.serveStaticFiles=function(req,res){
 //   let fileUrl=req.url=='/' ? '../public/login.html' : '../public'+req.url;
@@ -236,20 +260,20 @@ handlerModules.redirectLoggedOutUserToLogin = (req,res)=>{
 //   }
 // }
 //
-// handlerModules.getIndexPage=function(req,res){
-//   let fileContent=getFileContent(fs,'../public/index.html');
-//   fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
-//   handlerModules.setContentType('../public/index.html',res);
-//
-//   res.write(fileContent);
-//   res.end();
-// };
+handlerModules.getIndexPage=function(req,res){
+  let fileContent=getFileContent(fs,'./public/index.html');
+  fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
+  handlerModules.setContentType('./public/index.html',res);
+
+  res.write(fileContent);
+  res.end();
+};
 //
 // handlerModules.getViewPage=function(req,res){
 //
-//   let fileContent=getFileContent(fs,'../public/view.html');
-//   let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
-//
+  // let fileContent=getFileContent(fs,'../public/view.html');
+  // let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
+
 //   let multipleTodos=parseLinks(dbContent,req);
 //   fileContent=fileContent.replace('_Links',multipleTodos);
 //   fileContent=fileContent.replace('Hi User',` Hi ${req.user.userName}`);

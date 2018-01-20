@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script src="/js/addItem.js" charset="utf-8"></script>
     <meta charset="UTF-8">
     <title>Create todo</title>
     <link rel="stylesheet" href="./css/style.css">
@@ -25,8 +26,10 @@
               Description:<br>
               <input id="textbox" type="text" name="description" value=""><br>
               Item:<br>
-              <textarea id="itemTextArea" name="item" rows="10" cols="80"></textarea><br>
-              <input type="submit"value="Add Item to Todo">
+              <!-- <textarea id="itemTextArea" name="item" rows="10" cols="80"></textarea><br> -->
+              <p><div id="additem"></div></p>
+              <p><button type="button" onclick="getTextBox()">Add Item</button></p>
+              <input type="submit"value="Create Todo">
             </form>
             <!-- <a href="/doneEditing"><button name="done">Done</button></a> -->
           </div>
