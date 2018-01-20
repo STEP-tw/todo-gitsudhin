@@ -1,4 +1,4 @@
-
+let qs=require('querystring');
 let redirect = function(path){
   console.log(`redirecting to ${path}`);
   this.statusCode = 302;
@@ -28,7 +28,7 @@ const accumulate = (o,kv)=> {
   return o;
 };
 
-const parseBody = text=> text && text.split('&').map(toKeyValue).reduce(accumulate,{}) || {};
+const parseBody = text=> qs.parse(text) || {};
 
 const parseCookies = text=> {
   try {
