@@ -87,6 +87,27 @@ handlerModules.createTodo=function (req,res) {
   res.redirect('/index.html');
 }
 
+handlerModules.viewTodos=function (req,res) {
+  let user=userManager.getUser(req.user.userName);
+  let titles=user.getTodoTitles();
+  let titleLinks=parseTitlesToHtml(titles);
+  let fileContent=getFileContent(fs,'./public/view.html');
+  fileContent=fileContent.replace('_Links',titleLinks);
+  res.write(fileContent);
+  res.end();
+}
+
+const parseTitlesToHtml=function(todoTitles){
+  let content='';
+  let id=0;
+  todoTitles.forEach((title)=>{
+    content+=`<input type='checkbox' id='${id}' onclick=check() >
+    <button id=${id} onclick=previewTodo()>${title}</button><br>`;
+    id++;
+  });
+  return content;
+};
+
 const addItems=function(user,id,items){
   if (typeof items == 'string') {
     user.addTodoItem(id,items);
@@ -142,21 +163,7 @@ const getDummyUser=function(){
 //   })
 // };
 
-// const parseLinks=function(dbContent,req){
-//   let todosOfThisUser=dbContent.filter((todo)=>{
-//     return todo.username==req.user.userName;
-//   });
-//
-//   let content='';
-//   todosOfThisUser.forEach((todo)=>{
-//     if(isThisItemChecked(todo.title)){
-//       content+=`<input type='checkbox' id='_cb${todo.title}' checked onclick=check() ><a href='/viewTodo${todo.title}'><button id=_button${todo.title} onclick=previewTodo()>${todo.title}</button></a><br>`;
-//     }else{
-//       content+=`<input type='checkbox' id='_cb${todo.title}' onclick=check() ><a href='/viewTodo${todo.title}'><button id=_button${todo.title} onclick=previewTodo()>${todo.title}</button></a><br>`;
-//     }
-//   });
-//   return content;
-// };
+
 //
 // const isThisItemChecked=function(todoTitle){
 //   let dbContent=JSON.parse(getFileContent(fs,'../data/todoRecords.json') || getDummyUser());
@@ -262,14 +269,6 @@ const getDummyUser=function(){
 //   }
 // }
 //
-handlerModules.getIndexPage=function(req,res){
-  let fileContent=getFileContent(fs,'./public/index.html');
-  fileContent=fileContent.replace('Hi User',`Hi ${req.user.userName}`);
-  handlerModules.setContentType('./public/index.html',res);
-
-  res.write(fileContent);
-  res.end();
-};
 //
 // handlerModules.getViewPage=function(req,res){
 //

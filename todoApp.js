@@ -16,9 +16,8 @@ app.use(handlerModules.redirectLoggedInUserToHome);
 app.use(handlerModules.redirectLoggedOutUserToLogin);
 
 app.post('/login.html',handlerModules.validateUser);
-app.get('/index.html',handlerModules.getIndexPage);
 app.get('/logout',handlerModules.logoutUser);
-// app.get('/view.html',handlerModules.getViewTodo);
+app.get('/view.html',handlerModules.viewTodos);
 app.post('/create.html',handlerModules.createTodo);
 
 app.postprocess(handlers.requestHandler());
