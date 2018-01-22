@@ -13,8 +13,8 @@ class User{
   addTodoItem(id,item) {
     return this.todoList[id] && item.length>0 && this.todoList[id].addItem(item);
   }
-  editTodoItem(id,item) {
-    return this.todoList[id] && item.length>0 && this.todoList[id].addItem(item);
+  editTodoItem(todoId,itemId,text) {
+    return this.todoList[todoId] && this.todoList[todoId].editAnItem(itemId,text);
   }
   deleteTodoItemOf(todoId,itemId){
     return this.todoList[todoId] && this.todoList[todoId].deleteItem(itemId);

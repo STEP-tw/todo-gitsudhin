@@ -28,8 +28,8 @@ class Todo {
   editDescription(text) {
     return this.description=text;
   }
-  editAnItem(id,text) {
-    this.todoItems[id].text=text;
+  editAnItem(id,newText) {
+    return this.todoItems[id].text=newText;
   }
   deleteItem(id) {
     return this.todoItems.splice(id,1);
@@ -44,10 +44,10 @@ class Todo {
     return this.todoItems[id].isDone();
   }
   markTodoAsDone() {
-    this.checked=true;
+    return this.checked=true;
   }
   markTodoAsNotDone() {
-    this.checked=false;
+    return this.checked=false;
   }
   isTodoDone(){
     return this.checked;

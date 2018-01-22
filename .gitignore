@@ -3,3 +3,5 @@ node_modules/
 .DS_Store
 data/todoRecords.json
 .gitignore
+.nyc_output
+coverage/

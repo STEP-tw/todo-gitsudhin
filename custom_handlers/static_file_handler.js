@@ -1,8 +1,6 @@
-let fs=require('fs');
-let DefaultHandler=require('./default_handler.js');
-class StaticFileHandler extends DefaultHandler {
+class StaticFileHandler{
   constructor(path,fs) {
-    super();
+    this.fs=fs;
     this.path=path;
   }
   getPath(url){
@@ -10,8 +8,8 @@ class StaticFileHandler extends DefaultHandler {
   }
   execute(req,res){
     let filePath=this.getPath(req.url);
-    if (fs.existsSync(filePath)){
-      let fileText = fs.readFileSync(filePath);
+    if (this.fs.existsSync(filePath)){
+      let fileText = this.fs.readFileSync(filePath);
       res.write(fileText);
       res.end();
       return;
@@ -22,6 +20,9 @@ class StaticFileHandler extends DefaultHandler {
     res.statusCode=404;
     res.write(`${req.url} not found`);
     res.end();
+  }
+  getRequestHandler(){
+    return this.execute.bind(this);
   }
 }
 module.exports=StaticFileHandler;

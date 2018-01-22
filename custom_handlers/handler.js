@@ -106,6 +106,19 @@ handlerModules.previewTodo=function(req,res) {
   res.end();
 }
 
+
+handlerModules.deleteTodo=function(req,res){
+  let user=userManager.getUser(req.user.userName);
+  let todoId=req.body.todoID;
+  console.log(todoId);
+  user.deleteATodo(todoId);
+
+  let newTitles=user.getTodoTitles();
+  let titleLinks=parseTitlesToHtml(newTitles);
+  res.write(titleLinks);
+  res.end();
+}
+
 const parseTitlesToHtml=function(todoTitles){
   let content='';
   let id=0;

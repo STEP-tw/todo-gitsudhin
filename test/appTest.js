@@ -6,8 +6,8 @@ let WebApp = require('../webapp.js');
 let app = require('../todoApp.js');
 let th = require('./testHelper.js');
 
-describe.skip('app',()=>{
-  describe.skip('GET /bad',()=>{
+describe('app',()=>{
+  describe('GET /bad',()=>{
     it('responds with 404',done=>{
       request(app,{method:'GET',url:'/bad'},(res)=>{
         assert.equal(res.statusCode,404);
@@ -34,14 +34,14 @@ describe.skip('app',()=>{
         done();
       })
     })
-    it.skip('redirects to index.html',done=>{
-      request(app,{method:'GET',url:'/',headers:{cookies:[loginfailed=true]}},(res)=>{
+    it('redirects to index.html',done=>{
+      request(app,{method:'GET',url:'/',user:{userName:'sudhin'}},(res)=>{
         th.should_be_redirected_to(res,'/index.html');
         done();
       })
     })
   })
-  describe.skip('GET /index.html',()=>{
+  describe('GET /index.html',()=>{
     it('gives the login page if user not loggedin',done=>{
       request(app,{method:'GET',url:'/index.html'},res=>{
         th.should_be_redirected_to(res,'/login.html');
@@ -56,7 +56,7 @@ describe.skip('app',()=>{
       })
     })
   })
-  describe.skip('GET /login.html',()=>{
+  describe('GET /login.html',()=>{
     it('serves the login page',done=>{
       request(app,{method:'GET',url:'/login.html'},res=>{
         th.status_is_ok(res);
@@ -82,11 +82,11 @@ describe.skip('app',()=>{
       })
     })
   })
-  describe.skip('GET /view',()=>{
+  describe('GET /viewTodo',()=>{
     it('serves the view page if user logged in',done=>{
-      request(app,{method:'GET',url:'/view.html',user:{userName:'sudhin',name:'Sudhin MN',password:'123'}},res=>{
+      request(app,{method:'GET',url:'/view.html',user:{userName:'sudhin'}},res=>{
         th.status_is_ok(res);
-        th.body_contains(res,'_Preview');
+        th.body_contains(res,'Your Todo s');
         done();
       })
     })
@@ -97,12 +97,11 @@ describe.skip('app',()=>{
       })
     })
   })
-  describe.skip('GET /create',()=>{
+  describe('GET /create',()=>{
     it('serves the create todo page',done=>{
-      request(app,{method:'GET',url:'/create.html',user:{userName:'sudhin',name:'Sudhin MN',password:'123'}},res=>{
+      request(app,{method:'GET',url:'/create.html',user:{userName:'sudhin'}},res=>{
         th.status_is_ok(res);
         th.body_contains(res,'Create new todo');
-        th.content_type_is(res,'text/html');
         done();
       })
     })
@@ -113,13 +112,30 @@ describe.skip('app',()=>{
       })
     })
   })
-  describe.skip('POST /create',()=>{
+  describe('POST /create',()=>{
     it('serves the create todo page',done=>{
-      let options={method:'POST',url:'/create.html',user:{userName:'sudhin',name:'Sudhin MN',password:'123'},body:'title=newtodo&description=xxxx&item='};
+      let options={method:'POST',url:'/create.html',user:{userName:'sudhin'},body:'title=newtodos&description=xxxx&todoItems='};
+      request(app,options,res=>{
+        th.should_be_redirected_to(res,'/index.html');
+        done();
+      })
+    })
+  })
+  describe('POST /preview',()=>{
+    it('should show the todo on button click',done=>{
+      let options={method:'POST',url:'/preview',user:{userName:'sudhin'},body:'todoId=0'};
+      request(app,options,res=>{
+        th.body_contains(res,'newtodos');
+        done();
+      })
+    })
+  })
+  describe('POST /deleteTodo',()=>{
+    it('should delete todo on button click',done=>{
+      let options={method:'POST',url:'/deleteTodo',user:{userName:'sudhin'},body:'todoID=0'};
       request(app,options,res=>{
         th.status_is_ok(res);
-        th.body_contains(res,'Create new todo');
-        th.body_contains(res,'newtodo');
+        th.body_does_not_contain(res,'newtodos');
         done();
       })
     })

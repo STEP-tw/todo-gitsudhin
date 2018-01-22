@@ -6,7 +6,7 @@ let app = require('../custom_handlers/handler.js');
 let th = require('./testHelper.js');
 
 describe('handlerModules',()=>{
-  describe.skip('getContentType function returns contentType according to the extension',()=>{
+  describe('getContentType function returns contentType according to the extension',()=>{
     it('should return contentType as text/html',()=>{
       assert.equal(app.getContentType('.html'),'text/html');
     })
@@ -20,7 +20,7 @@ describe('handlerModules',()=>{
       assert.equal(app.getContentType('.pdf'),'application/pdf');
     })
   })
-  describe.skip('setContentType function returns contentType according to the extension',()=>{
+  describe('setContentType function returns contentType according to the extension',()=>{
     let headers={};
     let res={setHeader:(type,contentType)=>{headers[type]=contentType}}
 

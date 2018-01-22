@@ -209,4 +209,13 @@ describe('User',()=>{
       assert.ok(user.isItemTicked(0,0));
     })
   })
+  describe('17.editTodoItem',()=>{
+    it('Should give edited changes to the item',()=>{
+      user.addTodo('sampleTodo1','sample');
+      user.addTodoItem(0,'sampleItem1');
+      user.editTodoItem(0,0,'sampleItem2');
+      let expected=[{"_isDone": false,"text": "sampleItem2"}]
+      assert.deepEqual(user.getTodoItemsOf(0),expected);
+    })
+  })
 })
