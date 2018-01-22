@@ -38,12 +38,6 @@ const parseCookies = text=> {
   }
 }
 
-const fileNotFoundAction=function(res){
-  res.statusCode = 404;
-  res.write('File not found!');
-  res.end();
-};
-
 const initialize = function(){
   this._handlers = {GET:{},POST:{}};
   this._preprocess = [];
@@ -90,11 +84,6 @@ const main = function(req,res){
       if(res.finished) return;
       finalware(req,res);
     });
-    if(res.finished)return;
-    res.statusCode=404;
-    res.setHeader('content-type','text/html');
-    res.write('<h1>Error:404 Resource Not Found !</h1>');
-    res.end()
   });
 };
 
