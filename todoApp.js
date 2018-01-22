@@ -2,11 +2,9 @@ const WebApp = require('./webapp.js');
 const handlerModules=require('./custom_handlers/handler.js');
 const AllHandlers=require('./custom_handlers/composite_handler.js');
 const StaticFileHandler=require('./custom_handlers/static_file_handler.js');
-const LoginHandler=require('./custom_handlers/login_handler.js');
 let reg_users=[{"userName":"sudhin","name":"Sudhin MN","password":"123"}];
 
 let serverFile=new StaticFileHandler('./public');
-let loginValidator=new LoginHandler(reg_users);
 let handlers=new AllHandlers();
 handlers.addHandler(serverFile);
 let app = WebApp.create();
@@ -17,8 +15,10 @@ app.use(handlerModules.redirectLoggedOutUserToLogin);
 
 app.post('/login.html',handlerModules.validateUser);
 app.get('/logout',handlerModules.logoutUser);
-app.get('/view.html',handlerModules.viewTodos);
+app.get('/viewTodo',handlerModules.viewTodos);
 app.post('/create.html',handlerModules.createTodo);
+app.post('/preview',handlerModules.previewTodo);
+
 
 app.postprocess(handlers.requestHandler());
 // app.postprocess(handlerModules.serveButtonActioninView);

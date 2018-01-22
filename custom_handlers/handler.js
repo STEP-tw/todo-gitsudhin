@@ -91,9 +91,18 @@ handlerModules.viewTodos=function (req,res) {
   let user=userManager.getUser(req.user.userName);
   let titles=user.getTodoTitles();
   let titleLinks=parseTitlesToHtml(titles);
-  let fileContent=getFileContent(fs,'./public/view.html');
-  fileContent=fileContent.replace('_Links',titleLinks);
-  res.write(fileContent);
+
+  res.write(titleLinks);
+  res.end();
+}
+
+handlerModules.previewTodo=function(req,res) {
+  let user=userManager.getUser(req.user.userName);
+  let index=req.body.todoId;
+  let todoList=user.getTodoOf(index);
+  let parsedTodo=parseTodoToHTML(todoList);
+
+  res.write(parsedTodo);
   res.end();
 }
 
@@ -102,11 +111,25 @@ const parseTitlesToHtml=function(todoTitles){
   let id=0;
   todoTitles.forEach((title)=>{
     content+=`<input type='checkbox' id='${id}' onclick=check() >
-    <button id=${id} onclick=previewTodo()>${title}</button><br>`;
+    <button id=${id} onclick=viewTodo(id)>${title}</button>`;
+    content+=`<p><button id=${id}>Edit</button>`;
+    content+=`<button id=${id} onclick=deleteTodo(id)>Delete</button><br></p>`;
     id++;
   });
   return content;
-};
+}
+
+const parseTodoToHTML=function(todo){
+  let id=0;
+  let content=`<h2>${todo.title}</h2><br><h3>${todo.description}</h3>`;
+  todo.todoItems.forEach(function (item) {
+    content+=`<br><br><input type="checkbox" id=${id}>${item.text}`;
+    content+=`&nbsp <button id=${id}>Edit</button>`;
+    content+=`<button id=${id}>Delete</button>`;
+    id++;
+  });
+  return content;
+}
 
 const addItems=function(user,id,items){
   if (typeof items == 'string') {
