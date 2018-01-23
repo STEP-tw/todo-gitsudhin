@@ -41,7 +41,7 @@ handlerModules.validateUser=function(req,res){
 
 handlerModules.logoutUser=function(req,res){
   res.setHeader('Set-Cookie',[`loginFailed=false; Max-Age=5`,`sessionid=0`]);
-  delete req.user.sessionid || {};
+  delete req.user.sessionid;
   res.redirect('/login.html');
 };
 
@@ -77,9 +77,10 @@ handlerModules.viewTodos=function (req,res) {
 handlerModules.previewTodo=function(req,res) {
   let user=userManager.getUser(req.user.userName);
   let index=req.body.todoId;
-  let todoList=user.getTodoOf(index);
-  let parsedTodo=lib.parseTodoToHTML(index,todoList);
+  let todo=user.getTodoOf(index);
+  let parsedTodo=lib.parseTodoToHTML(index,todo);
 
+  res.setHeader('Set-Cookie',[`currentTodoId=${index}`]);
   res.write(parsedTodo);
   res.end();
 }
@@ -95,14 +96,25 @@ handlerModules.deleteTodo=function(req,res){
   res.end();
 }
 
-handlerModules.itemHandler=function (req,res) {
+handlerModules.deleteItem=function (req,res) {
   let user=userManager.getUser(req.user.userName);
   let action=req.body.action;
   let todoId=req.body.id.split('_')[0];
   let itemId=req.body.id.split('_')[1];
-  let editedTodo=action=='delete' && lib.removeItem(todoId,itemId,user);
+  let text=req.body.text;
+  let editedTodo=lib.removeItem(todoId,itemId,user);
   res.write(editedTodo);
   res.end();
+}
+
+handlerModules.saveEditedItem=function(req,res){
+  let user=userManager.getUser(req.user.userName);
+  let todoId=req.cookies.currentTodoId;
+  let text=req.body.newText;
+  let itemId=req.body.itemId.split('_')[1];
+  user.editTodoItem(todoId,itemId,text);
+
+  res.redirect('/view.html');
 }
 
 module.exports=handlerModules;

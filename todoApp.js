@@ -20,7 +20,8 @@ app.get('/viewTodo',handlerModules.viewTodos);
 app.post('/preview',handlerModules.previewTodo);
 app.get('/logout',handlerModules.logoutUser);
 app.post('/deleteTodo',handlerModules.deleteTodo);
-app.post('/handleItem',handlerModules.itemHandler);
+app.post('/deleteItem',handlerModules.deleteItem);
+app.post('/view.html',handlerModules.saveEditedItem);
 
 app.postprocess(handlers.requestHandler());
 // app.postprocess(handlerModules.serveButtonActioninView);

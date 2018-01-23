@@ -28,4 +28,11 @@ describe('handlerModules',()=>{
       })
     })
   })
+  describe('viewTodos',()=>{
+    it('should show todo titles',()=>{
+      request(handler.viewTodos,{method:'GET',url:'/viewTodo',user:{userName:'sudhin'}},res=>{
+        th.body_contains(res,'');
+      })
+    })
+  })
 })

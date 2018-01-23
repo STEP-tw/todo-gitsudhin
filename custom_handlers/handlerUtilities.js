@@ -1,5 +1,5 @@
 let lib={
-  toStr : function(obj){JSON.stringify(obj,null,2)},
+  toStr : function(obj){return JSON.stringify(obj,null,2)},
 
   parseTitlesToHtml:function(todoTitles){
     let content='';
@@ -18,9 +18,9 @@ let lib={
     let id=0;
     let content=`<h2>${todo.title}</h2><br><h3>${todo.description}</h3>`;
     todo.todoItems.forEach(function (item) {
-      content+=`<br><br><input type="checkbox" id=${todoId}_${id}>${item.text}`;
-      content+=`&nbsp <button id=${todoId}_${id} onclick="editItem(id)">Edit</button>`;
-      content+=`<button id=${todoId}_${id} onclick="deleteItem(id)">Delete</button>`;
+      content+=`<div id=${todoId}_${id}><br><br><input type="checkbox" id=${todoId}_${id}>${item.text}`;
+      content+=`&nbsp <button id=${todoId}_${id} onclick="editText(id)">Edit</button>`;
+      content+=`<button id=${todoId}_${id} onclick="deleteItem(id)">Delete</button></div>`;
       id++;
     });
     return content;
@@ -40,27 +40,11 @@ let lib={
     return regUsers.find(u=>u.userName==req.body.userName&&u.password==req.body.pwd);
   },
 
-  getDummyUser:function(){
-    let dummyUser=`[
-    {
-      "userName": "sudhin",
-      "password": "123",
-      "todoList": [
-        {
-          "title": "Sample todo",
-          "description": "for testing",
-          "todoItems": [ { "item": "Tesing item 1","checked": false } ]
-        }
-      ]
-    }]`;
-    return dummyuser;
-  },
-
   removeItem:function (todoId,itemId,user) {
     user.deleteTodoItemOf(todoId,itemId);
     let todo=user.getTodoOf(todoId);
     return lib.parseTodoToHTML(todoId,todo);
-  },
+  }
 
 }
 module.exports=lib;
