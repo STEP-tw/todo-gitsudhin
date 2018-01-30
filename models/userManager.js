@@ -3,14 +3,17 @@ class UserManager{
   constructor(){
     this.users=[];
   }
-  addUser(username){
-    let user=new User(username);
+
+  addUser(username,sessionid){
+    let user=new User(username,sessionid);
     this.users.push(user);
   }
+
   getUser(username){
-    let user=this.users.find((user)=>{return user.name==username});
+    let user=this.users.find((user)=>user.name==username);
     return user;
   }
+
   removeUser(username){
     let user=this.getUser(username);
     let index=this.users.indexOf(user);

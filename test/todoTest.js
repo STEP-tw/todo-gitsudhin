@@ -1,6 +1,6 @@
 let assert=require('chai').assert;
 let Todo=require('../models/todo.js');
-
+let todo;
 describe('Todo',()=>{
   beforeEach(()=>{
     todo = new Todo('Title','detail');
@@ -57,7 +57,10 @@ describe('Todo',()=>{
       todo.addItem('Buy bottle');
       todo.deleteItem(3);
 
-      let expected=[{text:'Buy milk',_isDone:false},{text:'Buy bottle',_isDone:false}];
+      let expected=[
+{text:'Buy milk',_isDone:false},
+{text:'Buy bottle',_isDone:false}
+];
       assert.deepEqual(todo.getAllItems(),expected);
     })
   })

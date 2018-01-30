@@ -3,14 +3,14 @@ let StaticFileHandler=require('../custom_handlers/static_file_handler.js');
 let th = require('./testHelper.js');
 let request = require('./requestSimulator.js');
 let dummyFS={
-  readFileSync:function(path){
+  readFileSync(path){
     let content='fileContentReaded';
     return content;
   },
-    existsSync:function(path){return path!='/public/dummyFile.txt'}
+    existsSync(path){
+ return path!='/public/dummyFile.txt'
+}
   }
-
-
 describe('Static File Handler',()=>{
   beforeEach(()=>{
     fileHandler=new StaticFileHandler('/public',dummyFS);

@@ -1,8 +1,8 @@
 const deleteItem=function(id){
   let xmlHttpReq=new XMLHttpRequest();
   xmlHttpReq.addEventListener('load',showRemainingItems);
-  xmlHttpReq.open('POST','/deleteItem');
-  xmlHttpReq.send(`id=${id}`);
+  xmlHttpReq.open('POST',`/deleteItem/${id}`);
+  xmlHttpReq.send();
 };
 
 const showRemainingItems=function(){

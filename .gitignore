@@ -4,5 +4,6 @@ node_modules/
 data/todoRecords.json
 .gitignore
 .nyc_output
+.eslintrc.js
 coverage/
 Untitled

@@ -4,9 +4,11 @@ class CompositeHandler extends DefaultHandler {
     super();
     this.handlers=[];
   }
+
   addHandler(handler){
     return this.handlers.push(handler);
   }
+
   execute(req,res){
     let i=0;
     while (!res.finished && i<this.handlers.length) {

@@ -1,6 +1,6 @@
+/* eslint-disable */
 let assert=require('chai').assert;
 let User=require('../models/user.js');
-
 describe('User',()=>{
   beforeEach(()=>{
     user = new User('sudhin');
@@ -13,7 +13,8 @@ describe('User',()=>{
         "checked": false,
         "description": "sample",
         "title": "sampleTodo1",
-        "todoItems":[]};
+        "todoItems":[]
+};
       assert.deepEqual(input,expected);
     })
     it('Should give an empty object if id is invalid',()=>{
@@ -40,13 +41,13 @@ describe('User',()=>{
     })
     it('Should add item to given todo',()=>{
       user.addTodoItem(0,'item');
-      let expected=[ {"_isDone": false,"text": "item"}];
+      let expected=[{"_isDone": false,"text": "item"}];
       let input=user.getTodoItemsOf(0);
       assert.deepEqual(input,expected);
     })
     it('Should not add item if todo does not exist',()=>{
       user.addTodoItem(2,'item');
-      let expected=[ {"_isDone": false,"text": "item"}];
+      let expected=[{"_isDone": false,"text": "item"}];
       let input=user.getTodoItemsOf(2);
       assert.notDeepEqual(input,expected);
     })
@@ -80,11 +81,14 @@ describe('User',()=>{
     it('Should give a list of todos',()=>{
       user.addTodo('sampleTodo','sample');
       let input=user.getAllTodos();
-      let expected=[{
+      let expected=[
+{
         "checked": false,
         "description": "sample",
         "title": "sampleTodo",
-        "todoItems":[]}];
+        "todoItems":[]
+}
+];
       assert.deepEqual(input,expected);
     })
     it('Should give an emptylist if there is no todo',()=>{
@@ -99,7 +103,10 @@ describe('User',()=>{
       user.addTodoItem(0,'firstItem');
       user.addTodoItem(0,'secondItem');
       let input=user.getTodoItemsOf(0);
-      let expected=[ {"_isDone": false,"text": "firstItem"},{"_isDone": false,"text": "secondItem"}];
+      let expected=[
+{"_isDone": false,"text": "firstItem"},
+{"_isDone": false,"text": "secondItem"}
+];
       assert.deepEqual(input,expected);
     })
     it('Should give an empty list if there is no item',()=>{
@@ -114,7 +121,10 @@ describe('User',()=>{
       user.addTodo('sampleTodo1','sample');
       user.addTodo('sampleTodo2','sample');
       let input=user.getTodoTitles();
-      let expected=['sampleTodo1','sampleTodo2'];
+      let expected=[
+'sampleTodo1',
+'sampleTodo2'
+];
       assert.deepEqual(input,expected);
     })
     it('Should give an empty list if there is no todo',()=>{
@@ -132,7 +142,8 @@ describe('User',()=>{
         "checked": false,
         "description": "sample",
         "title": "sampleTodo1",
-        "todoItems":[]};
+        "todoItems":[]
+};
       assert.deepEqual(input,expected);
     })
   })
@@ -189,7 +200,8 @@ describe('User',()=>{
         "checked": false,
         "description": "newSample",
         "title": "sampleTodo1",
-        "todoItems":[]};
+        "todoItems":[]
+};
       assert.deepEqual(input,expected);
     })
   })

@@ -2,7 +2,7 @@
   {
     "title": "todo for trip",
     "description": "things to be taken with",
-    "item": [
+    "items": [
       "mobile charger",
       "towel",
       "toothbrush",
@@ -15,90 +15,12 @@
   {
     "title": "Todo for diet",
     "description": "Routines that i should follow",
-    "item": [
+    "items": [
       "have food on time",
       "have enough fruits",
       "drink water"
     ],
     "username": "sudhin",
     "checked": true
-  },
-  {
-    "title": "Todo for study",
-    "description": "This is simple todo for my study",
-    "item": [
-      "Read well",
-      "take breaks",
-      "practice"
-    ],
-    "username": "sudhin",
-    "checked": false
-  },
-  {
-    "title": "gym todo",
-    "description": "todo for things to be carried with",
-    "item": [
-      "Water Bottle",
-      "Egg",
-      "Mat",
-      "Gloves"
-    ],
-    "username": "sudhin",
-    "checked": false
-  },
-  {
-    "title": "wedding of sachin",
-    "description": "This is the to-do for reminding me to take things to see her.",
-    "item": [
-      "Ring",
-      "Bouquet",
-      "Cash",
-      "Bike",
-      "Helmet",
-      "License"
-    ],
-    "username": "sreenadh",
-    "checked": false
-  },
-  {
-    "title": "Todo for meeting",
-    "description": "",
-    "item": [
-      ""
-    ],
-    "username": "sudhin",
-    "checked": false
-  },
-  {
-    "title": "flowercatalog assignment",
-    "description": "Todo for implementing flower catalog website",
-    "item": [
-      "make pages",
-      "add an action performer on click"
-    ],
-    "username": "sudhin",
-    "checked": true
-  },
-  {
-    "title": "This is first todo",
-    "description": "This is what I want to do",
-    "item": [
-      "first item ",
-      "second item"
-    ],
-    "username": "sudhin",
-    "checked": true
-  },
-  {
-    "title": "hi",
-    "description": "hello",
-    "item": [
-      "hi\r",
-      "hds\r",
-      "d\r",
-      "new\r",
-      "line +"
-    ],
-    "username": "sudhin"
   }
 ]

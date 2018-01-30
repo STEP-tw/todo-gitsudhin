@@ -1,6 +1,5 @@
 let assert=require('chai').assert;
 let Item=require('../models/todoItem.js');
-
 describe('Item',()=>{
   beforeEach(()=>{
     item = new Item("This is text");
